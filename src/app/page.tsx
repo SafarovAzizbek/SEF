@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import Timer from '@/components/Timer';
 import Schedule from '@/components/Schedule';
 import GoalSystem from '@/components/GoalSystem';
@@ -20,10 +20,54 @@ const QUOTES = [
   { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
 ];
 
-export default function Home() {
-  const [leftOpen, setLeftOpen] = useState(false);
+const MemoizedGoalSystem = memo(GoalSystem);
+const MemoizedSchedule = memo(Schedule);
+const MemoizedDailyPlanner = memo(DailyPlanner);
+const MemoizedTimer = memo(Timer);
+const MemoizedImportantDangers = memo(ImportantDangers);
+const MemoizedProgressJournal = memo(ProgressJournal);
+
+const ClockDisplay = () => {
   const [clock, setClock] = useState('');
   const [dateStr, setDateStr] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setClock(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+      setDateStr(now.toLocaleDateString('uz-UZ', { weekday: 'long', month: 'long', day: 'numeric' }));
+    };
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={styles.topCenter}>
+      <span className={styles.clockDisplay}>{clock}</span>
+      <span className={styles.dateDisplay}>{dateStr}</span>
+    </div>
+  );
+};
+
+const SmallClock = () => {
+  const [clock, setClock] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setClock(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+    };
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return <span className={styles.clockSmall}>{clock}</span>;
+};
+
+export default function Home() {
+  const [leftOpen, setLeftOpen] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState<'focus' | 'dashboard'>('focus');
@@ -31,15 +75,7 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
-    const update = () => {
-      const now = new Date();
-      setClock(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
-      setDateStr(now.toLocaleDateString('uz-UZ', { weekday: 'long', month: 'long', day: 'numeric' }));
-    };
-    update();
     setQuoteIndex(Math.floor(Math.random() * QUOTES.length));
-    const timer = setInterval(update, 1000);
-    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -86,9 +122,9 @@ export default function Home() {
           </button>
         </div>
         <div className={styles.sidebarScroll}>
-          <DailyPlanner />
+          <MemoizedDailyPlanner />
           <div className={styles.divider} />
-          <Schedule />
+          <MemoizedSchedule />
         </div>
       </aside>
 
@@ -107,10 +143,7 @@ export default function Home() {
             <span className={styles.menuLabel}>Plan</span>
           </button>
 
-          <div className={styles.topCenter}>
-            <span className={styles.clockDisplay}>{clock}</span>
-            <span className={styles.dateDisplay}>{dateStr}</span>
-          </div>
+          <ClockDisplay />
 
           <div className={styles.topRight}>
             <button
@@ -128,7 +161,7 @@ export default function Home() {
 
         {/* Timer - Full Center */}
         <div className={styles.timerArea}>
-          <Timer />
+          <MemoizedTimer />
         </div>
 
         {/* Scroll indicator */}
@@ -156,21 +189,21 @@ export default function Home() {
           </div>
           <h2 className={styles.dashTitle}>📊 Master Dashboard</h2>
           <div className={styles.dashHeaderRight}>
-            <span className={styles.clockSmall}>{clock}</span>
+            <SmallClock />
           </div>
         </div>
 
         {/* Dashboard Content */}
         <div className={styles.dashContent}>
           {/* Goal System - Full Width */}
-          <GoalSystem />
+          <MemoizedGoalSystem />
           
           <div className={styles.divider} />
           
           {/* Two Column Grid: Dangers + Journal */}
           <div className={styles.dashGrid}>
-            <ImportantDangers />
-            <ProgressJournal />
+            <MemoizedImportantDangers />
+            <MemoizedProgressJournal />
           </div>
 
           <div className={styles.divider} />
@@ -185,3 +218,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -106,14 +106,14 @@
 }
 
 .brandText {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: 0.05em;
   color: var(--text-primary);
 }
 
 .brandSub {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -183,12 +183,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 12px;
   color: var(--text-secondary);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-glass);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 600;
   transition: var(--transition-fast);
 }
@@ -200,7 +200,7 @@
 }
 
 .menuLabel {
-  font-size: 0.82rem;
+  font-size: 1rem;
 }
 
 .topRight {
@@ -213,12 +213,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 12px;
   color: var(--text-secondary);
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-glass);
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 600;
   transition: var(--transition-fast);
 }
@@ -244,14 +244,14 @@
 
 .clockDisplay {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.05em;
 }
 
 .dateDisplay {
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -290,7 +290,7 @@
 }
 
 .scrollText {
-  font-size: 0.68rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 0.08em;
@@ -330,12 +330,12 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.5rem 0.85rem;
+  padding: 0.6rem 1rem;
   border-radius: 10px;
   color: var(--text-secondary);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-glass);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 600;
   transition: var(--transition-fast);
 }
@@ -347,7 +347,7 @@
 }
 
 .dashTitle {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: 0.02em;
@@ -360,7 +360,7 @@
 
 .clockSmall {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78rem;
+  font-size: 1rem;
   color: var(--text-muted);
 }
 
@@ -396,15 +396,15 @@
 }
 
 .quoteText {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: var(--text-accent);
   font-style: italic;
   line-height: 1.8;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
 }
 
 .quoteAuthor {
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   font-weight: 600;
 }
