@@ -14,12 +14,14 @@ import styles from './Schedule.module.css';
 interface ScheduleBlock {
   id: string;
   title: string;
+  shortTitle: string;
   startTime: string;
   endTime: string;
   type: 'focus' | 'break';
   note: string;
   blockNum: number;
-  duration: number; // minutes
+  duration: number;
+  sessionIndex?: number; // 1, 2, 3 within block
   brainZone?: {
     name: string;
     icon: string;
@@ -30,7 +32,6 @@ interface ScheduleBlock {
   };
 }
 
-// Brain zone data for each session type within a block
 const BRAIN_ZONES: Record<number, Record<string, {
   name: string; icon: string; description: string; bestFor: string; neuroscience: string;
   brainRegions: { name: string; activation: number; color: string }[];
@@ -151,19 +152,25 @@ const BRAIN_ZONES: Record<number, Record<string, {
   },
 };
 
+const SESSION_LABELS: Record<string, string> = {
+  s1: 'Deep Session',
+  s2: 'Sprint',
+  s3: 'Final Push',
+};
+
 const BLOCK_TEMPLATE = [
   { suffix: 's1', title: 'Deep Session', duration: 90, type: 'focus' as const, emoji: '🧠' },
   { suffix: 'b1', title: 'Micro Reset', duration: 10, type: 'break' as const, emoji: '☕' },
   { suffix: 's2', title: 'Sprint', duration: 60, type: 'focus' as const, emoji: '⚡' },
   { suffix: 'b2', title: 'Micro Reset', duration: 10, type: 'break' as const, emoji: '☕' },
   { suffix: 's3', title: 'Final Push', duration: 90, type: 'focus' as const, emoji: '🔥' },
-  { suffix: 'lb', title: 'Recovery Break', duration: 40, type: 'break' as const, emoji: '🌿' },
+  { suffix: 'lb', title: 'Recovery', duration: 40, type: 'break' as const, emoji: '🌿' },
 ];
 
 const BREAK_NOTES: Record<string, string> = {
   b1: 'Water, wash face, 10 squats.',
   b2: 'Close eyes, deep breaths, stretch.',
-  lb: 'Eat, walk outside, no screens. Give your brain oxygen.',
+  lb: 'Eat, walk outside, no screens.',
 };
 
 function addMinutes(timeStr: string, minutes: number): string {
@@ -177,27 +184,31 @@ function addMinutes(timeStr: string, minutes: number): string {
 function generateSchedule(startTime: string): ScheduleBlock[] {
   const blocks: ScheduleBlock[] = [];
   let cursor = startTime;
+  let sessionCounter = 0;
 
   for (let blockNum = 1; blockNum <= 3; blockNum++) {
     for (const tmpl of BLOCK_TEMPLATE) {
       const endTime = addMinutes(cursor, tmpl.duration);
-      const isLastPush = blockNum === 3 && tmpl.suffix === 's3';
       const brainZone = tmpl.type === 'focus' ? BRAIN_ZONES[blockNum]?.[tmpl.suffix] : undefined;
-      const note = tmpl.type === 'break' 
+      const note = tmpl.type === 'break'
         ? (BREAK_NOTES[tmpl.suffix] || 'Rest and recover.')
         : (brainZone?.bestFor || '');
+      const isFocus = tmpl.type === 'focus';
+      const sessionLabel = SESSION_LABELS[tmpl.suffix] || tmpl.title;
       
+      if (isFocus) sessionCounter++;
+
       blocks.push({
         id: `b${blockNum}${tmpl.suffix}`,
-        title: isLastPush 
-          ? '🏆 Block 3 · FINAL PUSH' 
-          : `${tmpl.emoji} Block ${blockNum} · ${tmpl.title}`,
+        title: isFocus ? `B${blockNum} · ${sessionLabel}` : tmpl.title,
+        shortTitle: isFocus ? `B${blockNum}` : '',
         startTime: cursor,
         endTime,
         type: tmpl.type,
         note,
         blockNum,
         duration: tmpl.duration,
+        sessionIndex: isFocus ? sessionCounter : undefined,
         brainZone,
       });
       cursor = endTime;
@@ -207,7 +218,8 @@ function generateSchedule(startTime: string): ScheduleBlock[] {
   // Victory cooldown
   blocks.push({
     id: 'done',
-    title: '🏆 Victory Cooldown',
+    title: '🏆 Cooldown',
+    shortTitle: '',
     startTime: cursor,
     endTime: addMinutes(cursor, 25),
     type: 'break',
@@ -307,241 +319,173 @@ export default function Schedule() {
 
   const focusBlocks = scheduleData.filter(i => i.type === 'focus');
   const totalFocusMinutes = focusBlocks.reduce((acc, item) => acc + item.duration, 0);
+  const completedFocusBlocks = focusBlocks.filter(f => getStatus(f) === 'past').length;
   const endTime = scheduleData[scheduleData.length - 1]?.endTime || '21:45';
-
-  // Block summary (3 big blocks, each 4h focus)
-  const blockSummaries = [1, 2, 3].map(bn => {
-    const blockItems = scheduleData.filter(b => b.blockNum === bn);
-    const focusMins = blockItems.filter(b => b.type === 'focus').reduce((a, b) => a + b.duration, 0);
-    const firstStart = blockItems[0]?.startTime || '';
-    const lastEnd = blockItems[blockItems.length - 1]?.endTime || '';
-    const completedFocus = blockItems.filter(b => b.type === 'focus' && getStatus(b) === 'past').length;
-    const totalFocus = blockItems.filter(b => b.type === 'focus').length;
-    return { blockNum: bn, focusMins, firstStart, lastEnd, completedFocus, totalFocus };
-  });
 
   return (
     <div className={styles.container}>
-      {/* Header */}
+      {/* ═══ HEADER ═══ */}
       <div className={styles.header}>
-        <div>
-          <h2 className={styles.title}>📋 Today&apos;s Battle Plan</h2>
+        <div className={styles.headerLeft}>
+          <h2 className={styles.title}>Today&apos;s Sessions</h2>
           <div className={styles.subtitle}>
-            {completedCount}/{scheduleData.length} blocks · {Math.floor(totalFocusMinutes / 60)}h {totalFocusMinutes % 60}m focus
+            {completedFocusBlocks}/{focusBlocks.length} done · {Math.floor(totalFocusMinutes / 60)}h {totalFocusMinutes % 60}m
           </div>
         </div>
+        <button className={styles.timeBtn} onClick={() => setEditingStart(true)}>
+          {startTime} → {endTime}
+        </button>
       </div>
 
-      {/* Start Time Editor */}
-      <div className={styles.startTimeSection}>
-        {editingStart ? (
-          <div className={styles.startEditor}>
-            <div className={styles.startEditorLabel}>🕐 Set your start time:</div>
-            <input type="time" value={tempStart} onChange={e => setTempStart(e.target.value)} className={styles.timeInput} />
-            <div className={styles.presetGrid}>
-              {presets.map(p => (
-                <button key={p.value} className={`${styles.presetBtn} ${tempStart === p.value ? styles.presetActive : ''}`}
-                  onClick={() => setTempStart(p.value)}>{p.label}</button>
-              ))}
-            </div>
-            <div className={styles.startEditorActions}>
-              <button className={styles.cancelBtn} onClick={() => { setEditingStart(false); setTempStart(startTime); }}>Cancel</button>
-              <button className={styles.saveBtn} onClick={saveStartTime}>Apply Schedule</button>
-            </div>
+      {/* ═══ START TIME EDITOR ═══ */}
+      {editingStart && (
+        <div className={styles.startEditor}>
+          <div className={styles.startEditorLabel}>Set start time</div>
+          <input type="time" value={tempStart} onChange={e => setTempStart(e.target.value)} className={styles.timeInput} />
+          <div className={styles.presetGrid}>
+            {presets.map(p => (
+              <button key={p.value} className={`${styles.presetBtn} ${tempStart === p.value ? styles.presetActive : ''}`}
+                onClick={() => setTempStart(p.value)}>{p.label}</button>
+            ))}
           </div>
-        ) : (
-          <button className={styles.startTimeBtn} onClick={() => setEditingStart(true)}>
-            <span className={styles.startIcon}>🕐</span>
-            <span>Start: <strong>{startTime}</strong> → End: <strong>{endTime}</strong></span>
-            <span className={styles.editIcon}>✏️</span>
-          </button>
-        )}
+          <div className={styles.editorActions}>
+            <button className={styles.cancelBtn} onClick={() => { setEditingStart(false); setTempStart(startTime); }}>Cancel</button>
+            <button className={styles.saveBtn} onClick={saveStartTime}>Apply</button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ GANTT BAR ═══ */}
+      <div className={styles.gantt}>
+        {scheduleData.map((item) => {
+          const status = getStatus(item);
+          const isFocus = item.type === 'focus';
+          const totalMinutes = scheduleData.reduce((acc, b) => acc + b.duration, 0);
+          const widthPct = (item.duration / totalMinutes) * 100;
+
+          return (
+            <div
+              key={item.id}
+              className={`${styles.ganttSeg} ${isFocus ? styles.ganttFocus : styles.ganttBreak} ${status === 'active' ? styles.ganttActive : ''} ${status === 'past' ? styles.ganttPast : ''}`}
+              style={{ width: `${widthPct}%` }}
+              title={`${item.title} (${item.startTime}–${item.endTime})`}
+            >
+              {status === 'active' && (
+                <div className={styles.ganttFill} style={{ width: `${getProgress(item)}%` }} />
+              )}
+              {item.duration >= 40 && (
+                <span className={styles.ganttLabel}>{isFocus ? `B${item.blockNum}` : ''}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.ganttEnds}>
+        <span>{scheduleData[0]?.startTime}</span>
+        <span>{endTime}</span>
       </div>
 
-      <div className={styles.twoColumnLayout}>
-        <div className={styles.leftCol}>
-          {/* Live Now Card */}
-          {currentItem && (
-            <div className={`${styles.statusCard} ${styles.liveCard}`}>
-              <div className={styles.liveIndicator}>
-                <span className={styles.liveDot} />
-                LIVE NOW
+      {/* ═══ LIVE STATUS ═══ */}
+      {currentItem ? (
+        <div className={`${styles.liveCard} ${currentItem.type === 'break' ? styles.liveBreak : ''}`}>
+          <div className={styles.liveRow}>
+            <div className={styles.livePulse} />
+            <span className={styles.liveLabel}>NOW</span>
+            <span className={styles.liveName}>{currentItem.title}</span>
+            <span className={styles.liveTime}>{currentItem.startTime}–{currentItem.endTime}</span>
+          </div>
+          <div className={styles.liveBar}>
+            <div className={styles.liveBarFill} style={{ width: `${getProgress(currentItem)}%` }} />
+          </div>
+          {currentItem.brainZone && (
+            <div className={styles.liveBrain}>{currentItem.brainZone.icon} {currentItem.brainZone.name}</div>
+          )}
+        </div>
+      ) : (
+        <div className={styles.freeCard}>
+          <span className={styles.freeIcon}>🌙</span>
+          <span>Free Time — Recover well!</span>
+        </div>
+      )}
+
+      {nextItem && (
+        <div className={styles.nextCard}>
+          <span className={styles.nextLabel}>NEXT</span>
+          <span className={styles.nextName}>{nextItem.title}</span>
+          <span className={styles.nextTime}>{nextItem.startTime}</span>
+        </div>
+      )}
+
+      {/* ═══ SESSION LIST ═══ */}
+      <div className={styles.sessionList}>
+        {scheduleData.map((item) => {
+          const status = getStatus(item);
+          const isFocus = item.type === 'focus';
+          const isExpanded = expandedId === item.id;
+
+          return (
+            <div
+              key={item.id}
+              className={`${styles.session} ${styles[status]} ${isFocus ? styles.sessionFocus : styles.sessionBreak}`}
+              onClick={() => item.brainZone && setExpandedId(isExpanded ? null : item.id)}
+              style={{ cursor: item.brainZone ? 'pointer' : 'default' }}
+            >
+              <div className={styles.sessionMain}>
+                <div className={styles.sessionLeft}>
+                  {isFocus && <div className={`${styles.sessionDot} ${status === 'active' ? styles.sessionDotActive : status === 'past' ? styles.sessionDotDone : ''}`} />}
+                  {!isFocus && <div className={styles.sessionDotBreak} />}
+                  <div className={styles.sessionInfo}>
+                    <span className={styles.sessionTitle}>{item.title}</span>
+                    {item.note && <span className={styles.sessionNote}>{item.note}</span>}
+                  </div>
+                </div>
+                <div className={styles.sessionRight}>
+                  <span className={styles.sessionDuration}>{item.duration}m</span>
+                  <span className={styles.sessionClock}>{item.startTime}</span>
+                </div>
               </div>
-              <div className={styles.liveTitle}>{currentItem.title}</div>
-              <div className={styles.liveTime}>
-                {currentItem.startTime} → {currentItem.endTime}
-                <span className={styles.liveDuration}>{currentItem.duration}m</span>
-              </div>
-              <div className={styles.liveNote}>{currentItem.note}</div>
-              <div className={styles.liveProgress}>
-                <div className={styles.liveProgressFill} style={{ width: `${getProgress(currentItem)}%` }} />
-              </div>
-              {currentItem.brainZone && (
-                <div className={styles.liveBrainZone}>
-                  <span>{currentItem.brainZone.icon} {currentItem.brainZone.name}</span>
+
+              {status === 'active' && (
+                <div className={styles.sessionProgress}>
+                  <div className={styles.sessionProgressFill} style={{ width: `${getProgress(item)}%` }} />
+                </div>
+              )}
+
+              {/* Brain Zone Detail */}
+              {isExpanded && item.brainZone && (
+                <div className={styles.brainDetail}>
+                  <div className={styles.brainHeader}>
+                    <span>{item.brainZone.icon}</span>
+                    <span className={styles.brainName}>{item.brainZone.name}</span>
+                  </div>
+                  <p className={styles.brainDesc}>{item.brainZone.description}</p>
+                  <div className={styles.brainRegions}>
+                    {item.brainZone.brainRegions.map((region) => (
+                      <div key={region.name} className={styles.regionRow}>
+                        <span className={styles.regionName}>{region.name}</span>
+                        <div className={styles.regionBar}>
+                          <div
+                            className={styles.regionFill}
+                            style={{ width: `${region.activation}%`, background: region.color, boxShadow: `0 0 6px ${region.color}30` }}
+                          />
+                        </div>
+                        <span className={styles.regionPct} style={{ color: region.color }}>{region.activation}%</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={styles.brainMeta}>🎯 {item.brainZone.bestFor}</div>
+                  <div className={styles.brainMeta}>🧬 {item.brainZone.neuroscience}</div>
+                </div>
+              )}
+
+              {item.brainZone && !isExpanded && (
+                <div className={styles.brainHint}>
+                  {item.brainZone.icon} {item.brainZone.name} <span className={styles.tapHint}>▾</span>
                 </div>
               )}
             </div>
-          )}
-
-          {!currentItem && (
-            <div className={`${styles.statusCard} ${styles.offCard}`}>
-              <div className={styles.offTitle}>🌙 Free Time</div>
-              <div className={styles.offNote}>You&apos;re outside scheduled blocks. Recover well!</div>
-            </div>
-          )}
-
-          {/* Up Next */}
-          {nextItem && (
-            <div className={`${styles.statusCard} ${styles.nextCard}`}>
-              <div className={styles.nextBadge}>UP NEXT</div>
-              <div className={styles.nextTitle}>{nextItem.title}</div>
-              <div className={styles.nextTime}>
-                {nextItem.startTime} → {nextItem.endTime}
-                <span className={styles.liveDuration}>{nextItem.duration}m</span>
-              </div>
-            </div>
-          )}
-
-          {/* Timeline */}
-          <div className={styles.timeline}>
-            {scheduleData.map((item) => {
-              const status = getStatus(item);
-              const isFocus = item.type === 'focus';
-              const isExpanded = expandedId === item.id;
-              return (
-                <div key={item.id} className={`${styles.timelineItem} ${styles[status]}`}
-                  onClick={() => item.brainZone && setExpandedId(isExpanded ? null : item.id)}
-                  style={{ cursor: item.brainZone ? 'pointer' : 'default' }}>
-                  <div className={styles.timelineDot}>
-                    <span className={`${styles.dot} ${isFocus ? styles.dotFocus : styles.dotBreak}`} />
-                    {status !== 'past' && <span className={styles.timeLine} />}
-                  </div>
-                  <div className={styles.timelineContent}>
-                    <div className={styles.timelineHeader}>
-                      <span className={styles.timelineTitle}>
-                        {item.title}
-                      </span>
-                      <span className={styles.timelineTime}>
-                        {item.startTime}
-                        <span className={styles.durationBadge}>{item.duration}m</span>
-                      </span>
-                    </div>
-                    {status === 'active' && (
-                      <div className={styles.timelineProgress}>
-                        <div className={styles.timelineProgressFill} style={{ width: `${getProgress(item)}%` }} />
-                      </div>
-                    )}
-                    <div className={styles.timelineNote}>{item.note}</div>
-                    
-                    {/* Brain Zone Detail (expandable) */}
-                    {isExpanded && item.brainZone && (
-                      <div className={styles.brainZoneDetail}>
-                        <div className={styles.bzHeader}>
-                          <span className={styles.bzIcon}>{item.brainZone.icon}</span>
-                          <span className={styles.bzName}>{item.brainZone.name}</span>
-                        </div>
-                        <div className={styles.bzDesc}>{item.brainZone.description}</div>
-                        
-                        {/* Visual Brain Region Activation Map */}
-                        <div className={styles.bzRegions}>
-                          <div className={styles.bzRegionsLabel}>BRAIN REGION ACTIVATION</div>
-                          {item.brainZone.brainRegions.map((region) => (
-                            <div key={region.name} className={styles.bzRegionRow}>
-                              <span className={styles.bzRegionName}>{region.name}</span>
-                              <div className={styles.bzRegionBar}>
-                                <div 
-                                  className={styles.bzRegionFill} 
-                                  style={{ width: `${region.activation}%`, background: region.color, boxShadow: `0 0 8px ${region.color}40` }} 
-                                />
-                              </div>
-                              <span className={styles.bzRegionPct} style={{ color: region.color }}>{region.activation}%</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className={styles.bzBest}>
-                          <strong>🎯 Best for:</strong> {item.brainZone.bestFor}
-                        </div>
-                        <div className={styles.bzNeuro}>
-                          <strong>🧬 Neuroscience:</strong> {item.brainZone.neuroscience}
-                        </div>
-                      </div>
-                    )}
-                    {item.brainZone && !isExpanded && (
-                      <div className={styles.bzHint}>
-                        {item.brainZone.icon} {item.brainZone.name} <span className={styles.bzTap}>tap ▾</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className={styles.rightCol}>
-          {/* Block Overview Cards */}
-      <div className={styles.blockOverview}>
-        {blockSummaries.map(bs => (
-          <div key={bs.blockNum} className={styles.blockCard}>
-            <div className={styles.blockCardHeader}>
-              <span className={styles.blockCardNum}>BLOCK {bs.blockNum}</span>
-              <span className={styles.blockCardTime}>{bs.firstStart}–{bs.lastEnd}</span>
-            </div>
-            <div className={styles.blockCardDuration}>{bs.focusMins / 60}h focus</div>
-            <div className={styles.blockCardPattern}>90m + 60m + 90m</div>
-            <div className={styles.blockCardProgress}>
-              {[0, 1, 2].map(i => (
-                <div key={i} className={`${styles.blockDot} ${i < bs.completedFocus ? styles.blockDotDone : ''}`} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ═══ BIG VISION: Horizontal Gantt Timeline ═══ */}
-      <div className={styles.ganttContainer}>
-        <div className={styles.ganttTrack}>
-          {scheduleData.map((item) => {
-            const status = getStatus(item);
-            const isFocus = item.type === 'focus';
-            const totalMinutes = scheduleData.reduce((acc, b) => acc + b.duration, 0);
-            const widthPct = (item.duration / totalMinutes) * 100;
-            
-            let blockClass = isFocus ? styles.ganttFocus : styles.ganttBreak;
-            if (status === 'active') blockClass += ` ${isFocus ? styles.ganttActive : styles.ganttActiveBreak}`;
-            if (status === 'past') blockClass += ` ${styles.ganttPast}`;
-
-            return (
-              <div
-                key={item.id}
-                className={`${styles.ganttBlock} ${blockClass}`}
-                style={{ width: `${widthPct}%` }}
-                title={`${item.title} (${item.startTime}–${item.endTime})`}
-              >
-                {status === 'active' && (
-                  <div className={styles.ganttProgress} style={{ width: `${getProgress(item)}%` }} />
-                )}
-                {item.duration >= 30 && (
-                  <span className={styles.ganttLabel}>
-                    {isFocus ? `B${item.blockNum}` : ''} {item.duration}m
-                  </span>
-                )}
-                {item.duration >= 60 && (
-                  <span className={styles.ganttTime}>{item.startTime}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className={styles.ganttTimes}>
-          <span className={styles.ganttTimeLabel}>{scheduleData[0]?.startTime}</span>
-          <span className={styles.ganttTimeLabel}>{endTime}</span>
-        </div>
-      </div>
-
-        </div>
+          );
+        })}
       </div>
     </div>
   );

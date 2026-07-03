@@ -1,99 +1,85 @@
-/* ===== BIG VISION SCHEDULE - HORIZONTAL GANTT ===== */
+/* ═══════════════════════════════════════════════════════ */
+/*  SCHEDULE — FABLE 5 PREMIUM UX                        */
+/*  Clean, centered, no dark patches, Apple-grade polish  */
+/* ═══════════════════════════════════════════════════════ */
 
 .container {
   width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.twoColumnLayout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 2.5rem;
-  align-items: start;
-}
-
-.leftCol {
-  display: flex;
-  flex-direction: column;
-}
-
-.rightCol {
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===== HEADER ===== */
+/* ═══ HEADER ═══ */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .subtitle {
   font-size: 0.72rem;
-  color: var(--text-secondary);
-  margin-top: 0.2rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
   font-weight: 500;
 }
 
-/* ===== START TIME ===== */
-.startTimeSection {
-  margin-bottom: 1.25rem;
-}
-
-.startTimeBtn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  background: var(--bg-card);
+.timeBtn {
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  background: transparent;
   border: 1px solid var(--border-glass);
-  color: var(--text-secondary);
-  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
   font-weight: 500;
+  cursor: pointer;
   transition: var(--transition-fast);
 }
 
-.startTimeBtn:hover {
-  background: var(--bg-hover);
+.timeBtn:hover {
   border-color: var(--border-active);
+  color: var(--text-secondary);
 }
 
-.startIcon { font-size: 1rem; }
-.editIcon { margin-left: auto; opacity: 0.5; font-size: 0.8rem; }
-
+/* ═══ START TIME EDITOR ═══ */
 .startEditor {
-  background: var(--bg-card);
   border: 1px solid var(--border-glass);
   border-radius: 14px;
   padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  background: rgba(28, 28, 30, 0.5);
+  backdrop-filter: blur(12px);
 }
 
 .startEditorLabel {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   margin-bottom: 0.75rem;
 }
 
 .timeInput {
   width: 100%;
-  padding: 0.6rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   border-radius: 10px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-glass);
   color: var(--text-primary);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-bottom: 0.75rem;
 }
 
@@ -105,577 +91,509 @@
 .presetGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.4rem;
+  gap: 0.35rem;
   margin-bottom: 0.75rem;
 }
 
 .presetBtn {
-  padding: 0.45rem;
+  padding: 0.4rem;
   border-radius: 8px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-glass);
-  color: var(--text-secondary);
-  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
   font-weight: 500;
+  cursor: pointer;
   transition: var(--transition-fast);
 }
 
 .presetBtn:hover {
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
 }
 
 .presetActive {
-  background: var(--accent-focus) !important;
-  color: white !important;
-  border-color: var(--accent-focus) !important;
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border-color: var(--text-primary) !important;
+  font-weight: 700;
 }
 
-.startEditorActions {
+.editorActions {
   display: flex;
   gap: 0.5rem;
 }
 
 .cancelBtn {
   flex: 1;
-  padding: 0.55rem;
+  padding: 0.5rem;
   border-radius: 10px;
-  background: var(--bg-card);
+  background: transparent;
   border: 1px solid var(--border-glass);
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .saveBtn {
   flex: 1;
-  padding: 0.55rem;
+  padding: 0.5rem;
   border-radius: 10px;
-  background: var(--accent-focus);
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   font-size: 0.78rem;
   font-weight: 700;
   border: none;
+  cursor: pointer;
 }
 
-/* ===== BIG VISION: BLOCK OVERVIEW ===== */
-.blockOverview {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.6rem;
-  margin-bottom: 1.25rem;
-}
-
-.blockCard {
-  padding: 0.85rem;
-  border-radius: 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass);
-  transition: all 0.3s ease;
-}
-
-.blockCard:hover {
-  border-color: var(--border-active);
-  background: var(--bg-card);
-}
-
-.blockCardHeader {
+/* ═══ GANTT BAR ═══ */
+.gantt {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.4rem;
-}
-
-.blockCardNum {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: var(--accent-focus);
-}
-
-.blockCardTime {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--text-muted);
-}
-
-.blockCardDuration {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.blockCardPattern {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  margin-top: 0.2rem;
-}
-
-.blockCardProgress {
-  display: flex;
-  gap: 0.3rem;
-  margin-top: 0.5rem;
-}
-
-.blockDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--bg-hover);
-  transition: all 0.3s ease;
-}
-
-.blockDotDone {
-  background: var(--text-secondary);
-}
-
-/* ===== HORIZONTAL GANTT TIMELINE ===== */
-.ganttContainer {
-  margin-bottom: 1.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-}
-
-.ganttTrack {
-  display: flex;
-  gap: 2px;
-  min-width: 100%;
-  height: 48px;
-  border-radius: 12px;
+  height: 32px;
+  border-radius: 8px;
   overflow: hidden;
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass);
-  position: relative;
+  gap: 1px;
 }
 
-.ganttBlock {
+.ganttSeg {
   height: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  gap: 2px;
-  position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
-  cursor: pointer;
-  min-width: 28px;
-}
-
-.ganttBlock:hover {
-  filter: brightness(1.3);
-  z-index: 2;
 }
 
 .ganttFocus {
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.25) 0%, rgba(99, 102, 241, 0.12) 100%);
-  border-right: 1px solid rgba(99, 102, 241, 0.15);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .ganttBreak {
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.06) 100%);
-  border-right: 1px solid rgba(16, 185, 129, 0.1);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .ganttActive {
-  background: var(--bg-hover) !important;
-  border-right: 1px solid var(--border-active);
-  z-index: 3;
-}
-
-.ganttActiveBreak {
-  background: var(--bg-elevated) !important;
-  border-right: 1px solid var(--border-active);
-  z-index: 3;
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
 .ganttPast {
-  opacity: 0.35;
+  opacity: 0.3;
+}
+
+.ganttFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  transition: width 0.5s ease;
 }
 
 .ganttLabel {
   font-size: 0.55rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 90%;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  letter-spacing: 0.05em;
 }
 
-.ganttTime {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.5rem;
-  color: rgba(255, 255, 255, 0.35);
-  white-space: nowrap;
-}
-
-/* Progress fill inside active gantt block */
-.ganttProgress {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: var(--bg-hover);
-  pointer-events: none;
-  transition: width 0.5s ease;
-}
-
-/* Time labels under gantt */
-.ganttTimes {
+.ganttEnds {
   display: flex;
   justify-content: space-between;
-  padding: 0.3rem 0.2rem 0;
+  padding: 0.3rem 0.1rem 0;
+  margin-bottom: 1.25rem;
 }
 
-.ganttTimeLabel {
+.ganttEnds span {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.55rem;
   color: var(--text-muted);
 }
 
-/* ===== LIVE STATUS CARDS ===== */
-.statusCard {
-  padding: 1rem 1.25rem;
-  border-radius: 14px;
-  margin-bottom: 0.75rem;
-  border: 1px solid var(--border-glass);
-}
-
+/* ═══ LIVE STATUS CARD ═══ */
 .liveCard {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04));
-  border-color: rgba(99, 102, 241, 0.15);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.liveIndicator {
+.liveBreak {
+  border-color: rgba(48, 209, 88, 0.2);
+}
+
+.liveRow {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  color: var(--accent-focus);
-  margin-bottom: 0.5rem;
+  gap: 0.5rem;
 }
 
-.liveDot {
+.livePulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent-focus);
+  background: var(--text-primary);
   animation: pulse 1.5s infinite;
+  flex-shrink: 0;
 }
 
-.liveTitle {
-  font-size: 0.95rem;
-  font-weight: 700;
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.liveLabel {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+.liveName {
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 0.3rem;
+  flex: 1;
 }
 
 .liveTime {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.liveDuration {
-  padding: 0.15rem 0.4rem;
-  border-radius: 6px;
-  background: var(--bg-hover);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
-.liveNote {
-  font-size: 0.75rem;
-  color: var(--text-accent);
-  margin-top: 0.5rem;
-  line-height: 1.5;
-}
-
-.liveProgress {
-  height: 3px;
-  border-radius: 2px;
-  background: var(--bg-hover);
-  margin-top: 0.75rem;
+.liveBar {
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 0.65rem;
   overflow: hidden;
 }
 
-.liveProgressFill {
+.liveBarFill {
   height: 100%;
-  border-radius: 2px;
+  border-radius: 1px;
   background: var(--text-primary);
   transition: width 0.5s ease;
 }
 
-.liveBrainZone {
-  font-size: 0.72rem;
-  color: var(--accent-purple);
-  margin-top: 0.5rem;
-  font-weight: 600;
-}
-
-/* Off / Free Time */
-.offCard {
-  background: var(--bg-card);
-}
-
-.offTitle {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.offNote {
-  font-size: 0.75rem;
+.liveBrain {
+  font-size: 0.68rem;
   color: var(--text-muted);
-  margin-top: 0.3rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Free Time */
+.freeCard {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-glass);
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.freeIcon {
+  font-size: 1rem;
 }
 
 /* Next Card */
 .nextCard {
-  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.75rem;
 }
 
-.nextBadge {
-  font-size: 0.6rem;
+.nextLabel {
+  font-size: 0.55rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   color: var(--text-muted);
-  margin-bottom: 0.3rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.nextTitle {
-  font-size: 0.85rem;
-  font-weight: 600;
+.nextName {
+  font-weight: 500;
   color: var(--text-secondary);
+  flex: 1;
 }
 
 .nextTime {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.2rem;
 }
 
-/* ===== VERTICAL TIMELINE ===== */
-.timeline {
+/* ═══ SESSION LIST ═══ */
+.sessionList {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
-.timelineItem {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.6rem 0;
+.session {
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
   transition: var(--transition-fast);
 }
 
-.timelineDot {
+.session:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sessionFocus {}
+.sessionBreak {
+  opacity: 0.65;
+}
+
+.sessionMain {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 20px;
-  flex-shrink: 0;
-  padding-top: 0.2rem;
+  justify-content: space-between;
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.dotFocus { background: var(--text-primary); }
-.dotBreak { background: var(--text-secondary); }
-
-.timeLine {
-  width: 1px;
-  flex: 1;
-  background: var(--border-glass);
-  margin-top: 4px;
-}
-
-.timelineContent {
+.sessionLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
   flex: 1;
   min-width: 0;
 }
 
-.timelineHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.2rem;
+.sessionDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+  transition: all 0.3s ease;
 }
 
-.timelineTitle {
+.sessionDotActive {
+  background: var(--text-primary);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+.sessionDotDone {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sessionDotBreak {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  margin-top: 0.45rem;
+  margin-left: 2px;
+}
+
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sessionTitle {
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.timelineTime {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
+.sessionNote {
+  font-size: 0.65rem;
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-
-.durationBadge {
-  padding: 0.1rem 0.35rem;
-  border-radius: 5px;
-  background: var(--bg-card);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-}
-
-.timelineProgress {
-  height: 2px;
-  border-radius: 1px;
-  background: var(--bg-hover);
-  margin: 0.3rem 0;
+  margin-top: 0.1rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.timelineProgressFill {
+.sessionRight {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.sessionDuration {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0.12rem 0.35rem;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sessionClock {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  width: 38px;
+  text-align: right;
+}
+
+/* Session progress */
+.sessionProgress {
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-top: 0.5rem;
+  margin-left: 1.4rem;
+  overflow: hidden;
+}
+
+.sessionProgressFill {
   height: 100%;
   border-radius: 1px;
   background: var(--text-primary);
-}
-
-.timelineNote {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  line-height: 1.5;
+  transition: width 0.5s ease;
 }
 
 /* Status modifiers */
-.active .timelineTitle { color: var(--accent-focus); }
-.active .dot { animation: pulse 1.5s infinite; }
-.past { opacity: 0.4; }
-.past .timelineTitle { text-decoration: line-through; }
-
-/* ===== BRAIN ZONE DETAIL ===== */
-.brainZoneDetail {
-  margin-top: 0.75rem;
-  padding: 0.85rem;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass);
-  animation: fadeInUp 0.3s ease;
+.active .sessionTitle {
+  color: var(--text-primary);
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(8px); }
+.past {
+  opacity: 0.35;
+}
+
+.past .sessionTitle {
+  text-decoration: line-through;
+}
+
+/* ═══ BRAIN ZONE DETAIL ═══ */
+.brainDetail {
+  margin-top: 0.65rem;
+  margin-left: 1.4rem;
+  padding: 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.02);
+  animation: fadeUp 0.25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.bzHeader {
+.brainHeader {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
 }
 
-.bzIcon { font-size: 1.1rem; }
-.bzName {
-  font-size: 0.82rem;
+.brainName {
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.bzDesc {
-  font-size: 0.72rem;
-  color: var(--text-accent);
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-}
-
-.bzRegions {
-  margin-bottom: 0.75rem;
-}
-
-.bzRegionsLabel {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+.brainDesc {
+  font-size: 0.68rem;
   color: var(--text-muted);
-  margin-bottom: 0.4rem;
+  line-height: 1.6;
+  margin-bottom: 0.65rem;
 }
 
-.bzRegionRow {
+.brainRegions {
+  margin-bottom: 0.6rem;
+}
+
+.regionRow {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.25rem;
 }
 
-.bzRegionName {
-  font-size: 0.68rem;
-  color: var(--text-secondary);
-  width: 110px;
+.regionName {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  width: 100px;
   flex-shrink: 0;
 }
 
-.bzRegionBar {
+.regionBar {
   flex: 1;
-  height: 4px;
+  height: 3px;
   border-radius: 2px;
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.06);
   overflow: hidden;
 }
 
-.bzRegionFill {
+.regionFill {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.6s ease;
+  transition: width 0.5s ease;
 }
 
-.bzRegionPct {
+.regionPct {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  width: 30px;
+  width: 28px;
   text-align: right;
 }
 
-.bzBest, .bzNeuro {
-  font-size: 0.7rem;
-  color: var(--text-accent);
+.brainMeta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
   line-height: 1.6;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.15rem;
 }
 
-.bzHint {
-  font-size: 0.68rem;
+.brainHint {
+  font-size: 0.62rem;
   color: var(--text-muted);
   margin-top: 0.3rem;
+  margin-left: 1.4rem;
+  opacity: 0.6;
 }
 
-.bzTap {
+.tapHint {
+  font-size: 0.55rem;
   opacity: 0.5;
-  font-size: 0.6rem;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .twoColumnLayout { grid-template-columns: 1fr; }
-}
-
+/* ═══ RESPONSIVE ═══ */
 @media (max-width: 768px) {
-  .blockOverview { grid-template-columns: 1fr; }
-  .ganttTrack { height: 40px; }
-  .ganttLabel { font-size: 0.5rem; }
+  .container {
+    max-width: 100%;
+  }
+
+  .gantt {
+    height: 26px;
+  }
+
+  .sessionNote {
+    display: none;
+  }
 }
