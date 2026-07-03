@@ -113,7 +113,9 @@ export default function ProgressJournal() {
             <div className={styles.entryTop}>
               <span className={styles.entryMood}>{entry.mood}</span>
               <span className={styles.entryDate}>{entry.date}</span>
-              <button className={styles.entryRemove} onClick={() => removeEntry(entry.id)}>✕</button>
+              <button className={styles.entryRemove} onClick={() => removeEntry(entry.id)}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+              </button>
             </div>
             <div className={styles.entryText}>{entry.text}</div>
           </div>

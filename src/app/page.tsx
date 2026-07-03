@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import Timer from '@/components/Timer';
 import Schedule from '@/components/Schedule';
 import GoalSystem from '@/components/GoalSystem';
@@ -27,7 +27,7 @@ const MemoizedTimer = memo(Timer);
 const MemoizedImportantDangers = memo(ImportantDangers);
 const MemoizedProgressJournal = memo(ProgressJournal);
 
-const ClockDisplay = () => {
+const TopClock = () => {
   const [clock, setClock] = useState('');
   const [dateStr, setDateStr] = useState('');
 
@@ -35,7 +35,7 @@ const ClockDisplay = () => {
     const update = () => {
       const now = new Date();
       setClock(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
-      setDateStr(now.toLocaleDateString('uz-UZ', { weekday: 'long', month: 'long', day: 'numeric' }));
+      setDateStr(now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
     };
     update();
     const timer = setInterval(update, 1000);
@@ -43,178 +43,90 @@ const ClockDisplay = () => {
   }, []);
 
   return (
-    <div className={styles.topCenter}>
-      <span className={styles.clockDisplay}>{clock}</span>
-      <span className={styles.dateDisplay}>{dateStr}</span>
+    <div className={styles.dashHeaderRight}>
+      <span className={styles.clockDate}>{dateStr}</span>
+      <span className={styles.clockTime}>{clock}</span>
     </div>
   );
 };
 
-const SmallClock = () => {
-  const [clock, setClock] = useState('');
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      setClock(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
-    };
-    update();
-    const timer = setInterval(update, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return <span className={styles.clockSmall}>{clock}</span>;
-};
-
 export default function Home() {
-  const [leftOpen, setLeftOpen] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [activeSection, setActiveSection] = useState<'focus' | 'dashboard'>('focus');
-  const dashboardRef = useRef<HTMLDivElement>(null);
+  const [activeView, setActiveView] = useState<'dashboard' | 'focus'>('dashboard');
 
   useEffect(() => {
     setMounted(true);
     setQuoteIndex(Math.floor(Math.random() * QUOTES.length));
   }, []);
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setLeftOpen(false); }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
-
   if (!mounted) return null;
 
   const quote = QUOTES[quoteIndex];
 
-  const scrollToDashboard = () => {
-    setActiveSection('dashboard');
-    dashboardRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const scrollToFocus = () => {
-    setActiveSection('focus');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  if (activeView === 'focus') {
+    return (
+      <div className={styles.focusApp}>
+        <button className={styles.exitFocusBtn} onClick={() => setActiveView('dashboard')}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Dashboard
+        </button>
+        <MemoizedTimer />
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.app}>
-      {/* Overlay */}
-      {leftOpen && (
-        <div className={styles.overlay} onClick={() => setLeftOpen(false)} />
-      )}
+    <div className={styles.dashApp}>
+      {/* HEADER */}
+      <header className={styles.dashHeader}>
+        <div className={styles.brand}>
+          <div className={styles.brandIcon}>⚡</div>
+          <div className={styles.brandText}>SEF <span className={styles.brandSub}>OS</span></div>
+        </div>
+        
+        <TopClock />
 
-      {/* Left Sidebar - Schedule & Daily Plan */}
-      <aside className={`${styles.sidebar} ${styles.sidebarLeft} ${leftOpen ? styles.sidebarOpen : ''}`}>
-        <div className={styles.sidebarHeader}>
-          <div className={styles.brand}>
-            <div className={styles.brandIcon}>⚡</div>
-            <div>
-              <div className={styles.brandText}>SEF</div>
-              <div className={styles.brandSub}>Study Extreme Focus</div>
-            </div>
+        <button className={styles.enterFocusBtn} onClick={() => setActiveView('focus')}>
+          ENTER FOCUS
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </header>
+
+      {/* MAIN DASHBOARD CONTENT */}
+      <main className={styles.dashContent}>
+        
+        <div className={styles.dashTopRow}>
+          <div className={styles.scheduleWidget}>
+            <MemoizedSchedule />
           </div>
-          <button className={styles.closeBtn} onClick={() => setLeftOpen(false)}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div className={styles.sidebarScroll}>
-          <MemoizedDailyPlanner />
-          <div className={styles.divider} />
-          <MemoizedSchedule />
-        </div>
-      </aside>
-
-      {/* ═══════════════════════════════════════════════ */}
-      {/* SECTION 1: FOCUS — Full Screen Hero Timer */}
-      {/* ═══════════════════════════════════════════════ */}
-      <section className={styles.focusSection}>
-        <div className={styles.glow1} />
-        <div className={styles.glow2} />
-        <div className={styles.glow3} />
-
-        {/* Top Bar */}
-        <header className={styles.topBar}>
-          <button className={styles.menuBtn} onClick={() => setLeftOpen(true)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-            <span className={styles.menuLabel}>Plan</span>
-          </button>
-
-          <ClockDisplay />
-
-          <div className={styles.topRight}>
-            <button
-              className={`${styles.navBtn} ${activeSection === 'dashboard' ? styles.navBtnActive : ''}`}
-              onClick={scrollToDashboard}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-              </svg>
-              <span className={styles.menuLabel}>Dashboard</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Timer - Full Center */}
-        <div className={styles.timerArea}>
-          <MemoizedTimer />
-        </div>
-
-        {/* Scroll indicator */}
-        <div className={styles.scrollIndicator} onClick={scrollToDashboard}>
-          <span className={styles.scrollText}>Dashboard</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════ */}
-      {/* SECTION 2: DASHBOARD — Below Focus */}
-      {/* ═══════════════════════════════════════════════ */}
-      <section className={styles.dashboardSection} ref={dashboardRef}>
-        {/* Dashboard Header */}
-        <div className={styles.dashHeader}>
-          <div className={styles.dashHeaderLeft}>
-            <button className={styles.backToFocus} onClick={scrollToFocus}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M18 15l-6-6-6 6"/>
-              </svg>
-              Back to Focus
-            </button>
-          </div>
-          <h2 className={styles.dashTitle}>📊 Master Dashboard</h2>
-          <div className={styles.dashHeaderRight}>
-            <SmallClock />
+          <div className={styles.goalsWidget}>
+            <MemoizedGoalSystem />
           </div>
         </div>
 
-        {/* Dashboard Content */}
-        <div className={styles.dashContent}>
-          {/* Goal System - Full Width */}
-          <MemoizedGoalSystem />
-          
-          <div className={styles.divider} />
-          
-          {/* Two Column Grid: Dangers + Journal */}
-          <div className={styles.dashGrid}>
+        <div className={styles.divider} />
+
+        <div className={styles.dashBottomRow}>
+          <div className={styles.plannerWidget}>
+            <MemoizedDailyPlanner />
+          </div>
+          <div className={styles.dangersWidget}>
             <MemoizedImportantDangers />
+          </div>
+          <div className={styles.journalWidget}>
             <MemoizedProgressJournal />
           </div>
-
-          <div className={styles.divider} />
-
-          {/* Quote */}
-          <div className={styles.quoteCard}>
-            <div className={styles.quoteText}>&ldquo;{quote.text}&rdquo;</div>
-            <div className={styles.quoteAuthor}>— {quote.author}</div>
-          </div>
         </div>
-      </section>
+
+        <div className={styles.divider} />
+
+        {/* Quote */}
+        <div className={styles.quoteCard}>
+          <div className={`${styles.quoteText} serif`}>&ldquo;{quote.text}&rdquo;</div>
+          <div className={styles.quoteAuthor}>— {quote.author}</div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -22,7 +22,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.6rem;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-hover);
   border: 1px solid var(--border-glass);
   color: var(--text-secondary);
   font-weight: 600;
@@ -34,7 +34,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card);
   border: 1px solid var(--border-glass);
   border-radius: 14px;
 }
@@ -58,12 +58,12 @@
   opacity: 0.5;
 }
 
-.moodBtn:hover { opacity: 0.8; background: rgba(255, 255, 255, 0.04); }
+.moodBtn:hover { opacity: 0.8; background: var(--bg-hover); }
 
 .moodSelected {
   opacity: 1 !important;
-  background: rgba(99, 102, 241, 0.12) !important;
-  border-color: rgba(99, 102, 241, 0.3) !important;
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
 }
 
 .inputRow {
@@ -75,7 +75,7 @@
 .textarea {
   flex: 1;
   resize: none;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-hover);
   border: 1px solid var(--border-glass);
   border-radius: 10px;
   padding: 0.6rem 0.85rem;
@@ -92,8 +92,7 @@
 }
 
 .textarea:focus {
-  border-color: var(--accent-focus);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--text-primary);
 }
 
 .sendBtn {
@@ -103,8 +102,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent-focus);
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   flex-shrink: 0;
   transition: var(--transition-fast);
 }
@@ -128,7 +127,7 @@
 
 .entry {
   padding: 0.85rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-card);
   border: 1px solid var(--border-glass);
   border-radius: 12px;
   transition: var(--transition-fast);
@@ -141,7 +140,7 @@
 }
 
 .entry:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-hover);
 }
 
 .entryTop {
@@ -177,7 +176,7 @@
 }
 
 .entry:hover .entryRemove { opacity: 1; }
-.entryRemove:hover { color: var(--accent-danger); background: rgba(239, 68, 68, 0.1); }
+.entryRemove:hover { color: var(--accent-danger); background: var(--accent-danger-bg); }
 
 .entryText {
   font-size: 0.82rem;
@@ -201,12 +200,12 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card);
   border: 1px solid var(--border-glass);
   text-align: center;
 }
 
 .showMoreBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-hover);
   color: var(--text-primary);
 }

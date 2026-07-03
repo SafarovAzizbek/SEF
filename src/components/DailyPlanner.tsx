@@ -92,13 +92,17 @@ export default function DailyPlanner() {
         {tasks.map(task => (
           <div key={task.id} className={`${styles.taskItem} ${task.done ? styles.taskDone : ''}`}>
             <button className={styles.checkbox} onClick={() => toggleTask(task.id)}>
-              {task.done ? '✓' : ''}
+              {task.done ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              ) : ''}
             </button>
             <div className={styles.taskContent}>
               <span className={styles.taskText}>{task.text}</span>
               <span className={styles.taskSubject}>{task.subject}</span>
             </div>
-            <button className={styles.removeBtn} onClick={() => removeTask(task.id)}>✕</button>
+            <button className={styles.removeBtn} onClick={() => removeTask(task.id)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+            </button>
           </div>
         ))}
       </div>
@@ -116,7 +120,9 @@ export default function DailyPlanner() {
             onChange={e => setNewTask(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && addTask()}
           />
-          <button className={styles.addBtn} onClick={addTask} disabled={!newTask.trim()}>+</button>
+          <button className={styles.addBtn} onClick={addTask} disabled={!newTask.trim()}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
         </div>
       </div>
 

@@ -394,12 +394,10 @@ export default function Timer() {
     return h > 0 ? `${h}h ${m}m` : `${m}m`;
   };
 
-  // Progress ring
+  // Progress
   const currentFocus = settings.sequence[sessionsCompleted % settings.sequence.length];
   const total = (mode === 'custom' ? customDuration : mode === 'focus' ? currentFocus : mode === 'shortBreak' ? Math.round(currentFocus * settings.breakRatio) : Math.round(currentFocus * settings.breakRatio * 1.5)) * 60;
   const progress = total > 0 ? (total - timeLeft) / total : 0;
-  const R = 155, C = 2 * Math.PI * R;
-  const offset = C - progress * C;
 
   // Daily progress
   const todayHours = todaySeconds / 3600;
@@ -431,6 +429,18 @@ export default function Timer() {
     setIsActive(true);
   };
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
   if (!isLoaded) return null;
 
   return (
@@ -455,6 +465,30 @@ export default function Timer() {
       {/* ═══ ACTIVE/LOCKED STATE ═══ */}
       {(flowState !== 'idle' || isActive) && (
         <>
+          {/* Top Controls (Hidden while active) */}
+          <div className={`${styles.topControls} ${isActive ? styles.hideControls : ''}`}>
+            {/* Mode indicator */}
+            <div className={styles.modes}>
+              {(['focus', 'shortBreak', 'longBreak'] as Mode[]).map(m => {
+                const labels: Record<Mode, string> = { focus: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', custom: 'Custom' };
+                const icons: Record<Mode, string> = { focus: '🔥', shortBreak: '☕', longBreak: '🌿', custom: '⚙️' };
+                return (
+                  <div key={m}
+                    className={`${styles.modeBtn} ${mode === m ? (m === 'focus' ? styles.modeFocus : styles.modeBreak) : ''}`}
+                    style={{ cursor: 'default' }}>
+                    <span>{icons[m]}</span> {labels[m]}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Auto-mode toggle */}
+            <button className={`${styles.autoToggle} ${autoMode ? styles.autoOn : ''}`}
+              onClick={() => setAutoMode(!autoMode)}>
+              {autoMode ? '🔄 Auto-transition: ON' : '⏸ Auto-transition: OFF'}
+            </button>
+          </div>
+
           {/* Auto-transition overlay */}
           {showComplete && (
             <div className={styles.transitionOverlay}>
@@ -465,79 +499,55 @@ export default function Timer() {
             </div>
           )}
 
-          {/* Mode indicator */}
-          <div className={styles.modes}>
-            {(['focus', 'shortBreak', 'longBreak'] as Mode[]).map(m => {
-              const labels: Record<Mode, string> = { focus: 'Focus', shortBreak: 'Short Break', longBreak: 'Long Break', custom: 'Custom' };
-              const icons: Record<Mode, string> = { focus: '🔥', shortBreak: '☕', longBreak: '🌿', custom: '⚙️' };
-              return (
-                <div key={m}
-                  className={`${styles.modeBtn} ${mode === m ? (m === 'focus' ? styles.modeFocus : styles.modeBreak) : ''}`}
-                  style={{ cursor: 'default' }}>
-                  <span>{icons[m]}</span> {labels[m]}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Motivation banner */}
-          {mode !== 'focus' && isActive && (
-            <div className={styles.breakBanner}>
-              {getBreakMessage(mode)}
+          {/* Massive Timer + Linear Progress */}
+          <div className={styles.hugeTimerWrap}>
+            <div className={`${styles.timerLabel} ${isActive ? styles.hideControls : ''}`}>
+              {mode === 'focus' ? 'DEEP FOCUS' : mode === 'shortBreak' ? 'SHORT BREAK' : 'LONG BREAK'}
             </div>
-          )}
-
-          {mode === 'focus' && isActive && (
-            <div className={styles.focusBanner}>
-              {motivation.msg} — <span>{motivation.sub}</span>
+            
+            <div className={`${styles.digits} ${isActive ? styles.digitsActive : ''}`}>
+              {fmt(timeLeft)}
             </div>
-          )}
-
-          {/* Ring + Timer */}
-          <div className={`${styles.ringWrap} ${isActive ? styles.ringActive : ''} ${mode !== 'focus' ? styles.ringBreakMode : ''}`}>
-            <svg className={styles.ringSvg} viewBox="0 0 340 340">
-              <circle cx="170" cy="170" r={R} fill="transparent" strokeWidth="2.5" stroke="rgba(255,255,255,0.04)" />
-              <circle cx="170" cy="170" r={R} fill="transparent" strokeWidth="3" strokeLinecap="round"
-                className={mode === 'focus' ? styles.strokeFocus : styles.strokeBreak}
-                style={{ strokeDasharray: C, strokeDashoffset: offset,
-                  transition: isActive ? 'stroke-dashoffset 1s linear' : 'stroke-dashoffset 0.4s ease' }} />
-            </svg>
-            <div className={styles.ringInner}>
-              <div className={styles.timerLabel}>
-                {mode === 'focus' ? 'DEEP FOCUS' : mode === 'shortBreak' ? 'SHORT BREAK' : 'LONG BREAK'}
-              </div>
-              <div className={styles.digits}>{fmt(timeLeft)}</div>
-              <div className={styles.session}>
-                Session #{sessionsCompleted + 1} · Block {Math.floor(sessionsCompleted / 3) + 1}
+            
+            {/* YITA-style Progress Bar */}
+            <div className={styles.progressWrap}>
+              <div className={styles.progressTrack}>
+                <div 
+                  className={styles.progressFill} 
+                  style={{ width: `${progress * 100}%` }} 
+                />
               </div>
             </div>
+
+            <div className={`${styles.session} ${isActive ? styles.hideControls : ''}`}>
+              Session #{sessionsCompleted + 1} · Block {Math.floor(sessionsCompleted / 3) + 1}
+            </div>
           </div>
 
-          {/* Controls */}
-          <div className={styles.controls}>
-            <button className={styles.ctrlBtn} onClick={() => { switchMode(mode); setIsActive(false); }} title="Reset">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-            </button>
-            <button className={`${styles.playBtn} ${isActive ? styles.playing : ''}`}
-              onClick={() => setIsActive(!isActive)}>
-              {isActive ? (
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-              ) : (
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
-              )}
-            </button>
-
-          </div>
-
-          {/* Auto-mode toggle */}
-          <button className={`${styles.autoToggle} ${autoMode ? styles.autoOn : ''}`}
-            onClick={() => setAutoMode(!autoMode)}>
-            {autoMode ? '🔄 Auto-transition: ON' : '⏸ Auto-transition: OFF'}
-          </button>
-
-          {/* Space hint */}
-          <div className={styles.spaceHint}>
-            <kbd className={styles.kbd}>Space</kbd> {isActive ? 'pause' : 'resume'}
+          {/* Bottom Controls (Hidden while active) */}
+          <div className={`${styles.bottomControls} ${isActive ? styles.hideControls : ''}`}>
+            <div className={styles.controls}>
+              <button className={styles.ctrlBtn} onClick={() => { switchMode(mode); setIsActive(false); }} title="Reset">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+              <button className={`${styles.playBtn} ${isActive ? styles.playing : ''}`}
+                onClick={() => setIsActive(!isActive)}>
+                {isActive ? (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                ) : (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+                )}
+              </button>
+              <button className={styles.ctrlBtn} onClick={toggleFullScreen} title="Full Screen">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div className={styles.spaceHint}>
+              <kbd className={styles.kbd}>Space</kbd> {isActive ? 'pause' : 'resume'}
+            </div>
           </div>
         </>
       )}

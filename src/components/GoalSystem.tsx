@@ -93,15 +93,7 @@ export default function GoalSystem() {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const currentDay = today.getDate();
-  const monthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  const startOfYear = new Date(currentYear, 0, 1);
-  const dayOfYear = Math.floor((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  const totalDaysInYear = (currentYear % 4 === 0 && currentYear % 100 !== 0) || currentYear % 400 === 0 ? 366 : 365;
-  const yearPct = ((dayOfYear / totalDaysInYear) * 100).toFixed(1);
-  const monthName = today.toLocaleString('default', { month: 'long' }).toUpperCase();
-  const [painResultType, setPainResultType] = useState<'pain' | 'result'>('pain');
 
   // Input states for adding new targets
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
@@ -356,10 +348,16 @@ export default function GoalSystem() {
                 </form>
               </div>
             ) : (
-              <div className={styles.missionCard} onClick={() => setShowMissionEdit(true)}>
+              <div className={styles.missionCard}>
                 <div className={styles.missionHeader}>
                   <div className={styles.missionBadge}>MASTER MISSION</div>
-                  <div className={styles.streakBadge}>🔥 {data.streak} DAY STREAK</div>
+                  <div className={styles.streakEditWrap}>
+                    <div className={styles.streakBadge}>🔥 {data.streak} DAY STREAK</div>
+                    <button className={styles.editMissionBtn} onClick={() => setShowMissionEdit(true)}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Edit
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.missionTitle}>{mission.title}</div>
                 <div className={styles.missionWhy}>"{mission.why}"</div>
@@ -376,40 +374,7 @@ export default function GoalSystem() {
               </div>
             )}
 
-            {mission && !showMissionEdit && (
-              <div className={styles.timeMatrix}>
-                <div className={styles.tmHeader}>
-                  <h3 className={styles.tmTitle}>TIME MATRIX</h3>
-                  <span className={styles.tmYear}>{currentYear} PROGRESS: {yearPct}%</span>
-                </div>
-                
-                <div className={styles.tmYearBar}>
-                  <div className={styles.tmYearFill} style={{ width: `${yearPct}%` }} />
-                </div>
 
-                <div className={styles.tmMonthArea}>
-                  <div className={styles.tmMonthHeader}>
-                    <span>{monthName}</span>
-                    <span className={styles.tmMonthStats}>Day {currentDay} / {daysInMonth}</span>
-                  </div>
-                  <div className={styles.tmGrid}>
-                    {monthDays.map(d => {
-                      let status = 'future';
-                      if (d < currentDay) status = 'past';
-                      if (d === currentDay) status = 'today';
-                      
-                      return (
-                        <div 
-                          key={d} 
-                          className={`${styles.tmBox} ${styles[`tm_${status}`]}`}
-                          title={`Day ${d}`}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
 
             <div className={styles.motivatorEngine}>
               <div className={styles.dualSection}>
