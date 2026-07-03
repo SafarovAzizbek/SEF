@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, memo } from 'react';
 import Timer from '@/components/Timer';
-import Schedule from '@/components/Schedule';
+
 import GoalSystem from '@/components/GoalSystem';
 import ProgressJournal from '@/components/ProgressJournal';
 import DailyPlanner from '@/components/DailyPlanner';
@@ -21,7 +21,7 @@ const QUOTES = [
 ];
 
 const MemoizedGoalSystem = memo(GoalSystem);
-const MemoizedSchedule = memo(Schedule);
+
 const MemoizedDailyPlanner = memo(DailyPlanner);
 const MemoizedTimer = memo(Timer);
 const MemoizedImportantDangers = memo(ImportantDangers);
@@ -97,9 +97,7 @@ export default function Home() {
       <main className={styles.dashContent}>
         
         <div className={styles.dashTopRow}>
-          <div className={styles.scheduleWidget}>
-            <MemoizedSchedule />
-          </div>
+
           <div className={styles.goalsWidget}>
             <MemoizedGoalSystem />
           </div>
