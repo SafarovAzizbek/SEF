@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Timer from '@/components/Timer';
 import Schedule from '@/components/Schedule';
 import GoalSystem from '@/components/GoalSystem';
@@ -22,11 +22,12 @@ const QUOTES = [
 
 export default function Home() {
   const [leftOpen, setLeftOpen] = useState(false);
-  const [rightOpen, setRightOpen] = useState(false);
   const [clock, setClock] = useState('');
   const [dateStr, setDateStr] = useState('');
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [activeSection, setActiveSection] = useState<'focus' | 'dashboard'>('focus');
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -43,7 +44,7 @@ export default function Home() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setLeftOpen(false); setRightOpen(false); }
+      if (e.key === 'Escape') { setLeftOpen(false); }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -53,11 +54,21 @@ export default function Home() {
 
   const quote = QUOTES[quoteIndex];
 
+  const scrollToDashboard = () => {
+    setActiveSection('dashboard');
+    dashboardRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToFocus = () => {
+    setActiveSection('focus');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className={styles.app}>
       {/* Overlay */}
-      {(leftOpen || rightOpen) && (
-        <div className={styles.overlay} onClick={() => { setLeftOpen(false); setRightOpen(false); }} />
+      {leftOpen && (
+        <div className={styles.overlay} onClick={() => setLeftOpen(false)} />
       )}
 
       {/* Left Sidebar - Schedule & Daily Plan */}
@@ -81,31 +92,10 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* Floating Center Dashboard */}
-      <div className={`${styles.modalDashboard} ${rightOpen ? styles.modalDashboardOpen : ''}`}>
-        <div className={styles.sidebarHeader}>
-          <h2 className={styles.sidebarTitle}>📊 Master Dashboard</h2>
-          <button className={styles.closeBtn} onClick={() => setRightOpen(false)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div className={styles.modalScroll}>
-          <GoalSystem />
-          <div className={styles.divider} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-            <ImportantDangers />
-            <ProgressJournal />
-          </div>
-          <div className={styles.divider} />
-          <div className={styles.quoteCard}>
-            <div className={styles.quoteText}>&ldquo;{quote.text}&rdquo;</div>
-            <div className={styles.quoteAuthor}>— {quote.author}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Full Screen Center */}
-      <main className={styles.main}>
+      {/* ═══════════════════════════════════════════════ */}
+      {/* SECTION 1: FOCUS — Full Screen Hero Timer */}
+      {/* ═══════════════════════════════════════════════ */}
+      <section className={styles.focusSection}>
         <div className={styles.glow1} />
         <div className={styles.glow2} />
         <div className={styles.glow3} />
@@ -123,9 +113,15 @@ export default function Home() {
           </div>
 
           <div className={styles.topRight}>
-            <button className={styles.menuBtn} onClick={() => setRightOpen(true)}>
+            <button
+              className={`${styles.navBtn} ${activeSection === 'dashboard' ? styles.navBtnActive : ''}`}
+              onClick={scrollToDashboard}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
               <span className={styles.menuLabel}>Dashboard</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </button>
           </div>
         </header>
@@ -135,13 +131,57 @@ export default function Home() {
           <Timer />
         </div>
 
-        <footer className={styles.bottomBar}>
-          <span className={styles.hint}>ESC to close panels</span>
-          <span className={styles.hint}>Space to start/pause</span>
-        </footer>
-      </main>
+        {/* Scroll indicator */}
+        <div className={styles.scrollIndicator} onClick={scrollToDashboard}>
+          <span className={styles.scrollText}>Dashboard</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </section>
 
-      {/* App Settings Modal - REMOVED, now in Dashboard */}
+      {/* ═══════════════════════════════════════════════ */}
+      {/* SECTION 2: DASHBOARD — Below Focus */}
+      {/* ═══════════════════════════════════════════════ */}
+      <section className={styles.dashboardSection} ref={dashboardRef}>
+        {/* Dashboard Header */}
+        <div className={styles.dashHeader}>
+          <div className={styles.dashHeaderLeft}>
+            <button className={styles.backToFocus} onClick={scrollToFocus}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M18 15l-6-6-6 6"/>
+              </svg>
+              Back to Focus
+            </button>
+          </div>
+          <h2 className={styles.dashTitle}>📊 Master Dashboard</h2>
+          <div className={styles.dashHeaderRight}>
+            <span className={styles.clockSmall}>{clock}</span>
+          </div>
+        </div>
+
+        {/* Dashboard Content */}
+        <div className={styles.dashContent}>
+          {/* Goal System - Full Width */}
+          <GoalSystem />
+          
+          <div className={styles.divider} />
+          
+          {/* Two Column Grid: Dangers + Journal */}
+          <div className={styles.dashGrid}>
+            <ImportantDangers />
+            <ProgressJournal />
+          </div>
+
+          <div className={styles.divider} />
+
+          {/* Quote */}
+          <div className={styles.quoteCard}>
+            <div className={styles.quoteText}>&ldquo;{quote.text}&rdquo;</div>
+            <div className={styles.quoteAuthor}>— {quote.author}</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
