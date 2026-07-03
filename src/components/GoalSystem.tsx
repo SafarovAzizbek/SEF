@@ -573,6 +573,29 @@ function StatsTab() {
           isOnBreak={mode !== 'focus'}
           isActive={isActive}
           breakType={mode === 'longBreak' ? 'long' : 'short'}
+          activeBrainRegions={(() => {
+            // Determine which brain block we're in based on sessions completed
+            const blockNum = Math.min(3, Math.floor(sessionsCompleted / 3) + 1);
+            const sessionInBlock = (sessionsCompleted % 3);
+            const sessionKey = sessionInBlock === 0 ? 's1' : sessionInBlock === 1 ? 's2' : 's3';
+            
+            // Brain zone data matching Schedule.tsx BRAIN_ZONES
+            const BRAIN_REGIONS_MAP: Record<string, { name: string; activation: number; color: string }[]> = {
+              '1_s1': [{ name: 'Prefrontal Cortex', activation: 95, color: '#ef4444' }, { name: 'Working Memory', activation: 90, color: '#f59e0b' }, { name: 'Hippocampus', activation: 60, color: '#6366f1' }],
+              '1_s2': [{ name: 'Hippocampus', activation: 95, color: '#6366f1' }, { name: 'Temporal Lobe', activation: 80, color: '#8b5cf6' }, { name: 'Prefrontal Cortex', activation: 55, color: '#ef4444' }],
+              '1_s3': [{ name: 'Basal Ganglia', activation: 90, color: '#10b981' }, { name: 'Motor Cortex', activation: 75, color: '#14b8a6' }, { name: 'Prefrontal Cortex', activation: 40, color: '#ef4444' }],
+              '2_s1': [{ name: 'Default Mode Network', activation: 85, color: '#a855f7' }, { name: 'Prefrontal Cortex', activation: 80, color: '#ef4444' }, { name: 'Anterior Cingulate', activation: 70, color: '#f97316' }],
+              '2_s2': [{ name: 'Hippocampus', activation: 95, color: '#6366f1' }, { name: 'Prefrontal Cortex', activation: 85, color: '#ef4444' }, { name: 'Parietal Cortex', activation: 70, color: '#06b6d4' }],
+              '2_s3': [{ name: 'Association Cortex', activation: 90, color: '#8b5cf6' }, { name: 'Temporal Lobe', activation: 80, color: '#a855f7' }, { name: 'Prefrontal Cortex', activation: 75, color: '#ef4444' }],
+              '3_s1': [{ name: 'Locus Coeruleus', activation: 95, color: '#ef4444' }, { name: 'Prefrontal Cortex', activation: 70, color: '#f59e0b' }, { name: 'Amygdala', activation: 60, color: '#dc2626' }],
+              '3_s2': [{ name: 'Hippocampus', activation: 90, color: '#6366f1' }, { name: 'Neocortex', activation: 85, color: '#8b5cf6' }, { name: 'Prefrontal Cortex', activation: 65, color: '#ef4444' }],
+              '3_s3': [{ name: 'Whole Brain BDNF', activation: 100, color: '#10b981' }, { name: 'Hippocampus', activation: 95, color: '#6366f1' }, { name: 'Synaptic Growth', activation: 90, color: '#34d399' }],
+            };
+            
+            if (!isActive) return [];
+            const key = `${blockNum}_${sessionKey}`;
+            return BRAIN_REGIONS_MAP[key] || BRAIN_REGIONS_MAP['1_s1'];
+          })()}
         />
       </div>
 

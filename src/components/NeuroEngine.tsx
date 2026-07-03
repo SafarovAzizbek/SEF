@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from './NeuroEngine.module.css';
+import DigitalBrain from './DigitalBrain';
+import type { BrainRegionData } from './DigitalBrain';
 
 // ══════════════════════════════════════════════════════════════
 //  NEUROBIOLOGICAL PRODUCTIVITY ENGINE
@@ -283,9 +285,10 @@ interface Props {
   isOnBreak: boolean;
   isActive: boolean;
   breakType?: 'short' | 'long';
+  activeBrainRegions?: BrainRegionData[];
 }
 
-export default function NeuroEngine({ minutesFocused, sessionsToday, isOnBreak, isActive, breakType }: Props) {
+export default function NeuroEngine({ minutesFocused, sessionsToday, isOnBreak, isActive, breakType, activeBrainRegions }: Props) {
   const [hour, setHour] = useState(new Date().getHours());
   const [expanded, setExpanded] = useState(false);
   const [showBreakProto, setShowBreakProto] = useState(false);
@@ -329,6 +332,15 @@ export default function NeuroEngine({ minutesFocused, sessionsToday, isOnBreak, 
 
   return (
     <div className={styles.container}>
+      {/* ═══ DIGITAL BRAIN VISUALIZATION ═══ */}
+      {activeBrainRegions && activeBrainRegions.length > 0 && (
+        <DigitalBrain
+          activeRegions={activeBrainRegions}
+          title="🧠 BRAIN ACTIVATION MAP"
+          subtitle={isOnBreak ? 'Recovery mode — regions cooling down' : isActive ? 'Active neural pathways' : 'Idle state'}
+        />
+      )}
+
       {/* Brain Energy */}
       <div className={styles.energyCard}>
         <div className={styles.energyTop}>

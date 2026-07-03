@@ -377,6 +377,47 @@ export default function Schedule() {
         ))}
       </div>
 
+      {/* ═══ BIG VISION: Horizontal Gantt Timeline ═══ */}
+      <div className={styles.ganttContainer}>
+        <div className={styles.ganttTrack}>
+          {scheduleData.map((item) => {
+            const status = getStatus(item);
+            const isFocus = item.type === 'focus';
+            const totalMinutes = scheduleData.reduce((acc, b) => acc + b.duration, 0);
+            const widthPct = (item.duration / totalMinutes) * 100;
+            
+            let blockClass = isFocus ? styles.ganttFocus : styles.ganttBreak;
+            if (status === 'active') blockClass += ` ${isFocus ? styles.ganttActive : styles.ganttActiveBreak}`;
+            if (status === 'past') blockClass += ` ${styles.ganttPast}`;
+
+            return (
+              <div
+                key={item.id}
+                className={`${styles.ganttBlock} ${blockClass}`}
+                style={{ width: `${widthPct}%` }}
+                title={`${item.title} (${item.startTime}–${item.endTime})`}
+              >
+                {status === 'active' && (
+                  <div className={styles.ganttProgress} style={{ width: `${getProgress(item)}%` }} />
+                )}
+                {item.duration >= 30 && (
+                  <span className={styles.ganttLabel}>
+                    {isFocus ? `B${item.blockNum}` : ''} {item.duration}m
+                  </span>
+                )}
+                {item.duration >= 60 && (
+                  <span className={styles.ganttTime}>{item.startTime}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className={styles.ganttTimes}>
+          <span className={styles.ganttTimeLabel}>{scheduleData[0]?.startTime}</span>
+          <span className={styles.ganttTimeLabel}>{endTime}</span>
+        </div>
+      </div>
+
       {/* Live Now Card */}
       {currentItem && (
         <div className={`${styles.statusCard} ${styles.liveCard}`}>
