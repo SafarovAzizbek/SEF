@@ -1,0 +1,354 @@
+/* ===== FULLSCREEN DASHBOARD ===== */
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== OVERLAY ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== SIDEBARS ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 380px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebarLeft {
+  left: 0;
+  transform: translateX(-100%);
+  border-right: 1px solid var(--border-glass);
+  border-left: none;
+}
+
+.modalDashboard {
+  position: fixed;
+  inset: 5%; /* Full screen with 5% margin */
+  background: rgba(10, 10, 15, 0.85); /* Darker glassmorphism */
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transform: scale(0.95) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalDashboardOpen {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebarOpen {
+  transform: translateX(0);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-glass);
+  flex-shrink: 0;
+}
+
+.sidebarTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sidebarScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.closeBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  transition: var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* ===== BRAND ===== */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brandIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-focus), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
+.brandText {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.brandSub {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ===== MAIN FULLSCREEN ===== */
+.main {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glows */
+.glow1 {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 45vw;
+  height: 45vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow2 {
+  position: absolute;
+  bottom: -25%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.04), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow3 {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.03), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== TOP BAR ===== */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.menuBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.menuBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+.menuLabel {
+  font-size: 0.82rem;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settingsIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: var(--transition-fast);
+}
+
+.settingsIcon:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-glass);
+  transform: rotate(45deg);
+}
+
+.topCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.clockDisplay {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.dateDisplay {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ===== TIMER AREA ===== */
+.timerArea {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-glass);
+}
+
+/* ===== QUOTE ===== */
+.quoteCard {
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+}
+
+.quoteText {
+  font-size: 0.85rem;
+  color: var(--text-accent);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.quoteAuthor {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .sidebar { width: 100%; }
+  .menuLabel { display: none; }
+}
+
+@media (max-width: 600px) {
+  .modalDashboard {
+    inset: 0;
+    border-radius: 0;
+  }
+  .modalScroll {
+    padding: 1.5rem 1rem;
+  }
+}

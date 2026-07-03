@@ -1,0 +1,146 @@
+[
+  {
+    "id": "b1s1",
+    "title": "🧠 Block 1 · Deep Session",
+    "startTime": "07:00",
+    "endTime": "08:30",
+    "type": "focus",
+    "note": "Hardest topic first. Phone off. Eyes on the work."
+  },
+  {
+    "id": "b1b1",
+    "title": "☕ Micro Reset",
+    "startTime": "08:30",
+    "endTime": "08:40",
+    "type": "break",
+    "note": "Drink water, wash face, 10 squats."
+  },
+  {
+    "id": "b1s2",
+    "title": "⚡ Block 1 · Sprint",
+    "startTime": "08:40",
+    "endTime": "09:40",
+    "type": "focus",
+    "note": "Quick problems or formulas. No decisions, just work."
+  },
+  {
+    "id": "b1b2",
+    "title": "☕ Micro Reset",
+    "startTime": "09:40",
+    "endTime": "09:50",
+    "type": "break",
+    "note": "Close your eyes, deep breaths."
+  },
+  {
+    "id": "b1s3",
+    "title": "🔥 Block 1 · Final Push",
+    "startTime": "09:50",
+    "endTime": "11:20",
+    "type": "focus",
+    "note": "Finish Block 1. 4 hours done — you CAN do this."
+  },
+  {
+    "id": "b1lb",
+    "title": "🌿 Recovery Break",
+    "startTime": "11:20",
+    "endTime": "12:00",
+    "type": "break",
+    "note": "Lunch, walk, no music. Give your brain oxygen."
+  },
+  {
+    "id": "b2s1",
+    "title": "🧠 Block 2 · Deep Session",
+    "startTime": "12:00",
+    "endTime": "13:30",
+    "type": "focus",
+    "note": "New topic or deepen the previous one."
+  },
+  {
+    "id": "b2b1",
+    "title": "☕ Micro Reset",
+    "startTime": "13:30",
+    "endTime": "13:40",
+    "type": "break",
+    "note": "Water. Stand up. Stretch."
+  },
+  {
+    "id": "b2s2",
+    "title": "⚡ Block 2 · Sprint",
+    "startTime": "13:40",
+    "endTime": "14:40",
+    "type": "focus",
+    "note": "Practice problems, tests, or active recall."
+  },
+  {
+    "id": "b2b2",
+    "title": "☕ Micro Reset",
+    "startTime": "14:40",
+    "endTime": "14:50",
+    "type": "break",
+    "note": "Quick walk, eye exercises."
+  },
+  {
+    "id": "b2s3",
+    "title": "🔥 Block 2 · Final Push",
+    "startTime": "14:50",
+    "endTime": "16:20",
+    "type": "focus",
+    "note": "8 hours done. Halfway there. DON'T STOP."
+  },
+  {
+    "id": "b2lb",
+    "title": "🌿 Recovery Break",
+    "startTime": "16:20",
+    "endTime": "17:00",
+    "type": "break",
+    "note": "Dinner, fresh air. Recharge your brain."
+  },
+  {
+    "id": "b3s1",
+    "title": "🧠 Block 3 · Deep Session",
+    "startTime": "17:00",
+    "endTime": "18:30",
+    "type": "focus",
+    "note": "Final block. This is where winners separate from quitters."
+  },
+  {
+    "id": "b3b1",
+    "title": "☕ Micro Reset",
+    "startTime": "18:30",
+    "endTime": "18:40",
+    "type": "break",
+    "note": "Last rest. Water, breathe."
+  },
+  {
+    "id": "b3s2",
+    "title": "⚡ Block 3 · Sprint",
+    "startTime": "18:40",
+    "endTime": "19:40",
+    "type": "focus",
+    "note": "Quick review. Strengthen what you learned today."
+  },
+  {
+    "id": "b3b2",
+    "title": "☕ Micro Reset",
+    "startTime": "19:40",
+    "endTime": "19:50",
+    "type": "break",
+    "note": "Prepare for the final push."
+  },
+  {
+    "id": "b3s3",
+    "title": "🔥 Block 3 · FINAL PUSH",
+    "startTime": "19:50",
+    "endTime": "21:20",
+    "type": "focus",
+    "note": "12 HOURS DONE. You made it. RESPECT. 💪🔥"
+  },
+  {
+    "id": "done",
+    "title": "🏆 Victory Cooldown",
+    "startTime": "21:20",
+    "endTime": "21:45",
+    "type": "break",
+    "note": "Plan tomorrow. Write in journal. Sleep."
+  }
+]

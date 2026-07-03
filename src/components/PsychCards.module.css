@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.25rem;
+}
+
+.title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.controls button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: color 0.15s;
+}
+
+.controls button:hover {
+  color: var(--text-primary);
+}
+
+.card {
+  padding: 1rem;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid var(--border-glass);
+  border-left: 3px solid var(--card-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cardTop {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.icon {
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid var(--border-glass);
+}
+
+.labels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.concept {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--card-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cardTitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.text {
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}

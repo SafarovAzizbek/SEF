@@ -1,0 +1,85 @@
+/* ═══ NEURO ENGINE ═══ */
+.container { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
+
+/* Energy Card */
+.energyCard { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.6rem 0.75rem; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); }
+.energyTop { display: flex; justify-content: space-between; align-items: center; }
+.energyLabel { font-size: 0.72rem; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+.energyVal { font-size: 0.85rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.energyBar { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.energyFill { height: 100%; border-radius: 99px; transition: width 0.5s ease; box-shadow: 0 0 10px currentColor; }
+
+/* Flow State */
+.flowBar { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.6rem 0.75rem; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid; border-left-width: 3px; animation: flowPulse 3s ease-in-out infinite; }
+@keyframes flowPulse { 0%, 100% { opacity: 0.9; } 50% { opacity: 1; } }
+.flowDot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 0.25rem; animation: dotPulse 2s ease-in-out infinite; }
+@keyframes dotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+.flowInfo { display: flex; flex-direction: column; gap: 0.1rem; }
+.flowLabel { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+.flowTip { font-size: 0.68rem; color: var(--text-secondary); line-height: 1.4; }
+
+/* Break Protocol */
+.breakProto { border-radius: 12px; overflow: hidden; border: 1px solid rgba(16,185,129,0.15); }
+.breakToggle { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.75rem; font-size: 0.78rem; font-weight: 700; color: #6ee7b7; background: rgba(16,185,129,0.06); border: none; cursor: pointer; }
+.breakToggle:hover { background: rgba(16,185,129,0.1); }
+.breakContent { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(16,185,129,0.03); }
+.breakActions { display: flex; flex-direction: column; gap: 0.3rem; }
+.breakAction { font-size: 0.72rem; color: var(--text-primary); line-height: 1.5; padding: 0.2rem 0; }
+.breakReason { font-size: 0.65rem; color: var(--text-secondary); line-height: 1.5; padding-top: 0.35rem; border-top: 1px solid rgba(16,185,129,0.1); font-style: italic; }
+
+/* Warnings */
+.warning { display: flex; gap: 0.5rem; padding: 0.6rem 0.75rem; border-radius: 10px; align-items: flex-start; }
+.warningIcon { font-size: 0.9rem; flex-shrink: 0; margin-top: 0.05rem; }
+.warningTitle { font-size: 0.72rem; font-weight: 800; line-height: 1.3; }
+.warningMsg { font-size: 0.68rem; line-height: 1.5; margin-top: 0.1rem; }
+
+.warning_danger { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); }
+.warning_danger .warningTitle { color: #fca5a5; }
+.warning_danger .warningMsg { color: rgba(252,165,165,0.7); }
+
+.warning_warning { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.12); }
+.warning_warning .warningTitle { color: #fcd34d; }
+.warning_warning .warningMsg { color: rgba(252,211,77,0.7); }
+
+.warning_tip { background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.12); }
+.warning_tip .warningTitle { color: #a5b4fc; }
+.warning_tip .warningMsg { color: rgba(165,180,252,0.7); }
+
+.warning_celebrate { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.12); }
+.warning_celebrate .warningTitle { color: #6ee7b7; }
+.warning_celebrate .warningMsg { color: rgba(110,231,183,0.7); }
+
+/* Circadian */
+.circadianBar { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); cursor: pointer; }
+.circadianBar:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+.chevron { font-size: 0.6rem; color: var(--text-muted); }
+
+/* Expanded Panel */
+.expandedPanel { display: flex; flex-direction: column; gap: 0.75rem; padding: 0.75rem; border-radius: 12px; background: rgba(255,255,255,0.015); border: 1px solid var(--border-glass); animation: slideDown 0.2s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.circadianDetail { display: flex; flex-direction: column; gap: 0.4rem; }
+.circDesc { font-size: 0.72rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+.circRow { display: flex; flex-direction: column; gap: 0.3rem; }
+.circGood, .circBad { font-size: 0.68rem; line-height: 1.4; display: flex; flex-direction: column; gap: 0.1rem; }
+.circGood { color: #6ee7b7; }
+.circBad { color: #fca5a5; }
+.circLabel { font-weight: 700; font-size: 0.65rem; }
+.circNeuro { font-size: 0.65rem; color: #a5b4fc; padding: 0.35rem 0.5rem; border-radius: 8px; background: rgba(99,102,241,0.06); font-family: 'JetBrains Mono', monospace; }
+
+/* Neurochemical Dashboard */
+.neuroTitle { font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.chemGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.chemItem { padding: 0.4rem 0.5rem; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); }
+.chemDanger { border-color: rgba(239,68,68,0.2) !important; background: rgba(239,68,68,0.03) !important; }
+.chemTop { display: flex; align-items: center; gap: 0.25rem; font-size: 0.65rem; }
+.chemLabel { flex: 1; font-weight: 600; color: var(--text-secondary); }
+.chemVal { font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; }
+.chemBar { height: 2px; border-radius: 99px; background: rgba(255,255,255,0.06); overflow: hidden; margin-top: 0.2rem; }
+.chemFill { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+
+/* Science Tips */
+.scienceTips { display: flex; flex-direction: column; gap: 0.35rem; }
+.tipsList { display: flex; flex-direction: column; gap: 0.25rem; }
+.sciTip { font-size: 0.68rem; color: var(--text-secondary); line-height: 1.5; padding: 0.35rem 0.5rem; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); }
+.sciTip strong { color: var(--text-primary); }

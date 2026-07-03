@@ -1,0 +1,225 @@
+/* GoalTracker Module */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.addBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+}
+
+.addBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+/* Add Form */
+.addForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  animation: fadeInUp 0.3s ease;
+}
+
+.input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--accent-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+.emojiRow {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.emojiBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+}
+
+.emojiBtn:hover { background: rgba(255, 255, 255, 0.06); }
+
+.emojiSelected {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: var(--accent-focus) !important;
+}
+
+.saveBtn {
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  background: var(--accent-focus);
+}
+
+.saveBtn:hover { filter: brightness(1.1); }
+
+/* Goals List */
+.goalsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.goalCard {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  border-left: 3px solid var(--goal-color, var(--accent-focus));
+  transition: var(--transition-fast);
+}
+
+.goalCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.goalCard.urgent {
+  border-left-color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.goalCard.soon {
+  border-left-color: var(--accent-warning);
+}
+
+.goalTop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.goalEmoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.goalInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.goalTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.goalDate {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.removeBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: var(--transition-fast);
+}
+
+.goalCard:hover .removeBtn { opacity: 1; }
+.removeBtn:hover { color: var(--accent-danger); background: rgba(239, 68, 68, 0.1); }
+
+/* Countdown */
+.countdownRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.countdownBig {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.countdownUnit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.countdownHours {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Progress Bar */
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--goal-color, var(--accent-focus));
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
