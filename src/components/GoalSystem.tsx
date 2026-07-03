@@ -8,7 +8,6 @@ import NeuroEngine from './NeuroEngine';
 import NeuroGuideModal from './NeuroGuideModal';
 import AppSettings from './AppSettings';
 import Schedule from './Schedule';
-import GitHubCalendar from 'react-github-calendar';
 
 // ══════════════════════════════════════════════
 //  DATA TYPES
@@ -566,24 +565,6 @@ function StatsTab() {
             return BRAIN_REGIONS_MAP[key] || BRAIN_REGIONS_MAP['1_s1'];
           })()}
         />
-      </div>
-
-      {/* GitHub Commits */}
-      <div className={styles.statsCard}>
-        <div className={styles.statsCardHeader}>
-          <span className={styles.statsCardTitle}>🐙 GITHUB COMMIT MATRIX</span>
-          <span className={styles.statsCardValue}>SafarovAzizbek</span>
-        </div>
-        <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
-          <GitHubCalendar 
-            username="SafarovAzizbek" 
-            colorScheme="dark"
-            theme={{
-              light: ['#1a1a1a', '#0e4429', '#006d32', '#26a641', '#39d353'],
-              dark: ['#1a1a1a', '#0e4429', '#006d32', '#26a641', '#39d353'],
-            }}
-          />
-        </div>
       </div>
 
       {/* Guide Button */}
