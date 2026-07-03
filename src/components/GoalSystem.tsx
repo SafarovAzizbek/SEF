@@ -7,6 +7,7 @@ import LiveSchedule from './LiveSchedule';
 import NeuroEngine from './NeuroEngine';
 import NeuroGuideModal from './NeuroGuideModal';
 import AppSettings from './AppSettings';
+import Schedule from './Schedule';
 
 // ══════════════════════════════════════════════
 //  DATA TYPES
@@ -374,7 +375,9 @@ export default function GoalSystem() {
               </div>
             )}
 
-
+            <div className={styles.scheduleWrapper} style={{ marginTop: '2rem' }}>
+              <Schedule />
+            </div>
 
             <div className={styles.motivatorEngine}>
               <div className={styles.dualSection}>
