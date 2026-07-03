@@ -153,6 +153,13 @@ export default function Timer() {
       // Try local first for speed
       try {
         const saved = localStorage.getItem('sef_v3');
+        const activeState = localStorage.getItem('sef_active_timer');
+        
+        let loadedTimeLeft = DEFAULT_SETTINGS.sequence[0] * 60;
+        let wasActive = false;
+        let savedMode: Mode = 'focus';
+        let savedFlowState: FlowState = 'idle';
+
         if (saved) {
           const d = JSON.parse(saved);
           if (d.settings) setSettings(d.settings);
@@ -161,13 +168,38 @@ export default function Timer() {
           const today = new Date().toDateString();
           if (d.lastDate === today) setTodaySeconds(d.todaySeconds || 0);
           const s = d.settings || DEFAULT_SETTINGS;
-          if (s.focus) {
-             s.sequence = [s.focus, 60, s.focus];
-             s.breakRatio = 0.2;
-          }
-          setTimeLeft(s.sequence[0] * 60);
+          loadedTimeLeft = s.sequence[0] * 60;
         }
+
+        // Restore active timer if it exists
+        if (activeState) {
+          const active = JSON.parse(activeState);
+          if (active.isActive && active.targetEndTime) {
+            const remaining = Math.round((active.targetEndTime - Date.now()) / 1000);
+            if (remaining > 0) {
+              loadedTimeLeft = remaining;
+              wasActive = true;
+              savedMode = active.mode || 'focus';
+              savedFlowState = 'locked';
+            } else {
+              loadedTimeLeft = 0; // It finished while offline!
+            }
+          } else if (active.timeLeft) {
+             loadedTimeLeft = active.timeLeft;
+             savedMode = active.mode || 'focus';
+             savedFlowState = active.flowState || 'idle';
+          }
+        }
+        
+        setTimeLeft(loadedTimeLeft);
+        if (wasActive) {
+          setMode(savedMode);
+          setFlowState(savedFlowState);
+          setIsActive(true);
+        }
+
       } catch {}
+      
       // Then sync from cloud (overrides if newer)
       try {
         const cloud = await loadTimerState();
@@ -177,7 +209,6 @@ export default function Timer() {
           setAutoMode(cloud.auto_mode !== false);
           const today = new Date().toDateString();
           if (cloud.last_date === today) setTodaySeconds(cloud.today_seconds || 0);
-          setTimeLeft((cloud.settings?.sequence?.[0] || 90) * 60);
         }
       } catch {}
       setIsLoaded(true);
@@ -245,8 +276,23 @@ export default function Timer() {
 
   // Tick — uses timestamp-based tracking to survive background tabs
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) {
+      // Save paused state
+      localStorage.setItem('sef_active_timer', JSON.stringify({ isActive: false, timeLeft, mode, flowState }));
+      return;
+    }
+    
     lastTickRef.current = Date.now();
+    const targetEndTime = Date.now() + timeLeft * 1000;
+    
+    // Save target end time so it survives reloads/closed tabs
+    localStorage.setItem('sef_active_timer', JSON.stringify({ 
+      isActive: true, 
+      targetEndTime, 
+      mode,
+      flowState 
+    }));
+
     const iv = setInterval(() => {
       const now = Date.now();
       const elapsed = Math.round((now - lastTickRef.current) / 1000);
@@ -263,7 +309,7 @@ export default function Timer() {
       }
     }, 1000);
     return () => clearInterval(iv);
-  }, [isActive]);
+  }, [isActive, mode, flowState]); // Note: timeLeft is intentionally omitted to avoid resetting the interval
 
   // ═══ CORE: Auto-transition on complete ═══
   useEffect(() => {
