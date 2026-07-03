@@ -293,7 +293,21 @@ export default function Timer() {
       flowState 
     }));
 
-    const iv = setInterval(() => {
+    // Use Web Worker to bypass browser throttling on unfocused tabs
+    const workerCode = `
+      let iv;
+      self.onmessage = function(e) {
+        if (e.data === 'start') {
+          iv = setInterval(() => self.postMessage('tick'), 1000);
+        } else if (e.data === 'stop') {
+          clearInterval(iv);
+        }
+      };
+    `;
+    const blob = new Blob([workerCode], { type: 'application/javascript' });
+    const worker = new Worker(URL.createObjectURL(blob));
+
+    worker.onmessage = () => {
       const now = Date.now();
       const elapsed = Math.round((now - lastTickRef.current) / 1000);
       lastTickRef.current = now;
@@ -307,8 +321,14 @@ export default function Timer() {
           return m;
         });
       }
-    }, 1000);
-    return () => clearInterval(iv);
+    };
+
+    worker.postMessage('start');
+
+    return () => {
+      worker.postMessage('stop');
+      worker.terminate();
+    };
   }, [isActive, mode, flowState]); // Note: timeLeft is intentionally omitted to avoid resetting the interval
 
   // ═══ CORE: Auto-transition on complete ═══
