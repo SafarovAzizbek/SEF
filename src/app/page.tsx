@@ -82,7 +82,7 @@ export default function Home() {
       <header className={styles.dashHeader}>
         <div className={styles.brand}>
           <div className={styles.brandIcon}>⚡</div>
-          <div className={styles.brandText}>SEF <span className={styles.brandSub}>OS</span></div>
+          <div className={styles.brandText}>SEF <span className={styles.brandSub}>Study Extreme Focus</span></div>
         </div>
         
         <TopClock />

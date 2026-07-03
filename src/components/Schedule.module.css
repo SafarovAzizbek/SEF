@@ -4,6 +4,23 @@
   width: 100%;
 }
 
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.leftCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+}
+
 /* ===== HEADER ===== */
 .header {
   display: flex;
@@ -653,6 +670,10 @@
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .twoColumnLayout { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 768px) {
   .blockOverview { grid-template-columns: 1fr; }
   .ganttTrack { height: 40px; }

@@ -358,7 +358,130 @@ export default function Schedule() {
         )}
       </div>
 
-      {/* Block Overview Cards */}
+      <div className={styles.twoColumnLayout}>
+        <div className={styles.leftCol}>
+          {/* Live Now Card */}
+          {currentItem && (
+            <div className={`${styles.statusCard} ${styles.liveCard}`}>
+              <div className={styles.liveIndicator}>
+                <span className={styles.liveDot} />
+                LIVE NOW
+              </div>
+              <div className={styles.liveTitle}>{currentItem.title}</div>
+              <div className={styles.liveTime}>
+                {currentItem.startTime} → {currentItem.endTime}
+                <span className={styles.liveDuration}>{currentItem.duration}m</span>
+              </div>
+              <div className={styles.liveNote}>{currentItem.note}</div>
+              <div className={styles.liveProgress}>
+                <div className={styles.liveProgressFill} style={{ width: `${getProgress(currentItem)}%` }} />
+              </div>
+              {currentItem.brainZone && (
+                <div className={styles.liveBrainZone}>
+                  <span>{currentItem.brainZone.icon} {currentItem.brainZone.name}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!currentItem && (
+            <div className={`${styles.statusCard} ${styles.offCard}`}>
+              <div className={styles.offTitle}>🌙 Free Time</div>
+              <div className={styles.offNote}>You&apos;re outside scheduled blocks. Recover well!</div>
+            </div>
+          )}
+
+          {/* Up Next */}
+          {nextItem && (
+            <div className={`${styles.statusCard} ${styles.nextCard}`}>
+              <div className={styles.nextBadge}>UP NEXT</div>
+              <div className={styles.nextTitle}>{nextItem.title}</div>
+              <div className={styles.nextTime}>
+                {nextItem.startTime} → {nextItem.endTime}
+                <span className={styles.liveDuration}>{nextItem.duration}m</span>
+              </div>
+            </div>
+          )}
+
+          {/* Timeline */}
+          <div className={styles.timeline}>
+            {scheduleData.map((item) => {
+              const status = getStatus(item);
+              const isFocus = item.type === 'focus';
+              const isExpanded = expandedId === item.id;
+              return (
+                <div key={item.id} className={`${styles.timelineItem} ${styles[status]}`}
+                  onClick={() => item.brainZone && setExpandedId(isExpanded ? null : item.id)}
+                  style={{ cursor: item.brainZone ? 'pointer' : 'default' }}>
+                  <div className={styles.timelineDot}>
+                    <span className={`${styles.dot} ${isFocus ? styles.dotFocus : styles.dotBreak}`} />
+                    {status !== 'past' && <span className={styles.timeLine} />}
+                  </div>
+                  <div className={styles.timelineContent}>
+                    <div className={styles.timelineHeader}>
+                      <span className={styles.timelineTitle}>
+                        {item.title}
+                      </span>
+                      <span className={styles.timelineTime}>
+                        {item.startTime}
+                        <span className={styles.durationBadge}>{item.duration}m</span>
+                      </span>
+                    </div>
+                    {status === 'active' && (
+                      <div className={styles.timelineProgress}>
+                        <div className={styles.timelineProgressFill} style={{ width: `${getProgress(item)}%` }} />
+                      </div>
+                    )}
+                    <div className={styles.timelineNote}>{item.note}</div>
+                    
+                    {/* Brain Zone Detail (expandable) */}
+                    {isExpanded && item.brainZone && (
+                      <div className={styles.brainZoneDetail}>
+                        <div className={styles.bzHeader}>
+                          <span className={styles.bzIcon}>{item.brainZone.icon}</span>
+                          <span className={styles.bzName}>{item.brainZone.name}</span>
+                        </div>
+                        <div className={styles.bzDesc}>{item.brainZone.description}</div>
+                        
+                        {/* Visual Brain Region Activation Map */}
+                        <div className={styles.bzRegions}>
+                          <div className={styles.bzRegionsLabel}>BRAIN REGION ACTIVATION</div>
+                          {item.brainZone.brainRegions.map((region) => (
+                            <div key={region.name} className={styles.bzRegionRow}>
+                              <span className={styles.bzRegionName}>{region.name}</span>
+                              <div className={styles.bzRegionBar}>
+                                <div 
+                                  className={styles.bzRegionFill} 
+                                  style={{ width: `${region.activation}%`, background: region.color, boxShadow: `0 0 8px ${region.color}40` }} 
+                                />
+                              </div>
+                              <span className={styles.bzRegionPct} style={{ color: region.color }}>{region.activation}%</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className={styles.bzBest}>
+                          <strong>🎯 Best for:</strong> {item.brainZone.bestFor}
+                        </div>
+                        <div className={styles.bzNeuro}>
+                          <strong>🧬 Neuroscience:</strong> {item.brainZone.neuroscience}
+                        </div>
+                      </div>
+                    )}
+                    {item.brainZone && !isExpanded && (
+                      <div className={styles.bzHint}>
+                        {item.brainZone.icon} {item.brainZone.name} <span className={styles.bzTap}>tap ▾</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles.rightCol}>
+          {/* Block Overview Cards */}
       <div className={styles.blockOverview}>
         {blockSummaries.map(bs => (
           <div key={bs.blockNum} className={styles.blockCard}>
@@ -418,123 +541,7 @@ export default function Schedule() {
         </div>
       </div>
 
-      {/* Live Now Card */}
-      {currentItem && (
-        <div className={`${styles.statusCard} ${styles.liveCard}`}>
-          <div className={styles.liveIndicator}>
-            <span className={styles.liveDot} />
-            LIVE NOW
-          </div>
-          <div className={styles.liveTitle}>{currentItem.title}</div>
-          <div className={styles.liveTime}>
-            {currentItem.startTime} → {currentItem.endTime}
-            <span className={styles.liveDuration}>{currentItem.duration}m</span>
-          </div>
-          <div className={styles.liveNote}>{currentItem.note}</div>
-          <div className={styles.liveProgress}>
-            <div className={styles.liveProgressFill} style={{ width: `${getProgress(currentItem)}%` }} />
-          </div>
-          {currentItem.brainZone && (
-            <div className={styles.liveBrainZone}>
-              <span>{currentItem.brainZone.icon} {currentItem.brainZone.name}</span>
-            </div>
-          )}
         </div>
-      )}
-
-      {!currentItem && (
-        <div className={`${styles.statusCard} ${styles.offCard}`}>
-          <div className={styles.offTitle}>🌙 Free Time</div>
-          <div className={styles.offNote}>You&apos;re outside scheduled blocks. Recover well!</div>
-        </div>
-      )}
-
-      {/* Up Next */}
-      {nextItem && (
-        <div className={`${styles.statusCard} ${styles.nextCard}`}>
-          <div className={styles.nextBadge}>UP NEXT</div>
-          <div className={styles.nextTitle}>{nextItem.title}</div>
-          <div className={styles.nextTime}>
-            {nextItem.startTime} → {nextItem.endTime}
-            <span className={styles.liveDuration}>{nextItem.duration}m</span>
-          </div>
-        </div>
-      )}
-
-      {/* Timeline */}
-      <div className={styles.timeline}>
-        {scheduleData.map((item) => {
-          const status = getStatus(item);
-          const isFocus = item.type === 'focus';
-          const isExpanded = expandedId === item.id;
-          return (
-            <div key={item.id} className={`${styles.timelineItem} ${styles[status]}`}
-              onClick={() => item.brainZone && setExpandedId(isExpanded ? null : item.id)}
-              style={{ cursor: item.brainZone ? 'pointer' : 'default' }}>
-              <div className={styles.timelineDot}>
-                <span className={`${styles.dot} ${isFocus ? styles.dotFocus : styles.dotBreak}`} />
-                {status !== 'past' && <span className={styles.timeLine} />}
-              </div>
-              <div className={styles.timelineContent}>
-                <div className={styles.timelineHeader}>
-                  <span className={styles.timelineTitle}>
-                    {item.title}
-                  </span>
-                  <span className={styles.timelineTime}>
-                    {item.startTime}
-                    <span className={styles.durationBadge}>{item.duration}m</span>
-                  </span>
-                </div>
-                {status === 'active' && (
-                  <div className={styles.timelineProgress}>
-                    <div className={styles.timelineProgressFill} style={{ width: `${getProgress(item)}%` }} />
-                  </div>
-                )}
-                <div className={styles.timelineNote}>{item.note}</div>
-                
-                {/* Brain Zone Detail (expandable) */}
-                {isExpanded && item.brainZone && (
-                  <div className={styles.brainZoneDetail}>
-                    <div className={styles.bzHeader}>
-                      <span className={styles.bzIcon}>{item.brainZone.icon}</span>
-                      <span className={styles.bzName}>{item.brainZone.name}</span>
-                    </div>
-                    <div className={styles.bzDesc}>{item.brainZone.description}</div>
-                    
-                    {/* Visual Brain Region Activation Map */}
-                    <div className={styles.bzRegions}>
-                      <div className={styles.bzRegionsLabel}>BRAIN REGION ACTIVATION</div>
-                      {item.brainZone.brainRegions.map((region) => (
-                        <div key={region.name} className={styles.bzRegionRow}>
-                          <span className={styles.bzRegionName}>{region.name}</span>
-                          <div className={styles.bzRegionBar}>
-                            <div 
-                              className={styles.bzRegionFill} 
-                              style={{ width: `${region.activation}%`, background: region.color, boxShadow: `0 0 8px ${region.color}40` }} 
-                            />
-                          </div>
-                          <span className={styles.bzRegionPct} style={{ color: region.color }}>{region.activation}%</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className={styles.bzBest}>
-                      <strong>🎯 Best for:</strong> {item.brainZone.bestFor}
-                    </div>
-                    <div className={styles.bzNeuro}>
-                      <strong>🧬 Neuroscience:</strong> {item.brainZone.neuroscience}
-                    </div>
-                  </div>
-                )}
-                {item.brainZone && !isExpanded && (
-                  <div className={styles.bzHint}>
-                    {item.brainZone.icon} {item.brainZone.name} <span className={styles.bzTap}>tap ▾</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
