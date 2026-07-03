@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  /* Vercel uses its optimal build mode automatically */
 };
 
 export default nextConfig;
