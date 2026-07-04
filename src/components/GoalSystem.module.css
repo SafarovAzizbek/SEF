@@ -55,6 +55,32 @@
   gap: 1.25rem;
 }
 
+.visionColumns {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+.visionSidebar {
+  position: sticky;
+  top: 5rem;
+}
+
+.visionMain {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .visionColumns {
+    grid-template-columns: 1fr;
+  }
+  .visionSidebar {
+    position: static;
+  }
+}
+
 /* Mission Card (Ultra Modern) */
 .missionCard { 
   padding: 1.5rem; 

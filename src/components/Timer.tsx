@@ -124,6 +124,11 @@ export default function Timer() {
   const [customDuration, setCustomDuration] = useState(30);
   const transitionRef = useRef<NodeJS.Timeout | null>(null);
   const lastTickRef = useRef<number>(Date.now());
+  const modeRef = useRef<Mode>(mode);
+  const workerUrlRef = useRef<string | null>(null);
+
+  // Keep modeRef in sync
+  useEffect(() => { modeRef.current = mode; }, [mode]);
 
   // Reflection handlers
   const handleReflectionSubmit = (text: string) => {
@@ -257,7 +262,7 @@ export default function Timer() {
     } else {
       setIsActive(false);
     }
-  }, [settings, autoMode]);
+  }, [settings, autoMode, sessionsCompleted]);
 
   const startCustomSession = () => {
     if (!customReason.trim()) return;
@@ -305,7 +310,9 @@ export default function Timer() {
       };
     `;
     const blob = new Blob([workerCode], { type: 'application/javascript' });
-    const worker = new Worker(URL.createObjectURL(blob));
+    const url = URL.createObjectURL(blob);
+    workerUrlRef.current = url;
+    const worker = new Worker(url);
 
     worker.onmessage = () => {
       const now = Date.now();
@@ -316,10 +323,10 @@ export default function Timer() {
           const newTime = Math.max(0, t - elapsed);
           return newTime;
         });
-        setMode(m => {
-          if (m === 'focus') setTodaySeconds(s => s + elapsed);
-          return m;
-        });
+        // Use ref instead of setMode to avoid unnecessary re-renders
+        if (modeRef.current === 'focus') {
+          setTodaySeconds(s => s + elapsed);
+        }
       }
     };
 
@@ -328,8 +335,9 @@ export default function Timer() {
     return () => {
       worker.postMessage('stop');
       worker.terminate();
+      if (workerUrlRef.current) URL.revokeObjectURL(workerUrlRef.current);
     };
-  }, [isActive, mode, flowState]); // Note: timeLeft is intentionally omitted to avoid resetting the interval
+  }, [isActive]); // Only restart worker when isActive changes
 
   // ═══ CORE: Auto-transition on complete ═══
   useEffect(() => {

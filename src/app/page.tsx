@@ -5,7 +5,7 @@ import Timer from '@/components/Timer';
 
 import GoalSystem from '@/components/GoalSystem';
 import ProgressJournal from '@/components/ProgressJournal';
-import DailyPlanner from '@/components/DailyPlanner';
+
 import ImportantDangers from '@/components/ImportantDangers';
 import styles from './page.module.css';
 
@@ -22,7 +22,7 @@ const QUOTES = [
 
 const MemoizedGoalSystem = memo(GoalSystem);
 
-const MemoizedDailyPlanner = memo(DailyPlanner);
+
 const MemoizedTimer = memo(Timer);
 const MemoizedImportantDangers = memo(ImportantDangers);
 const MemoizedProgressJournal = memo(ProgressJournal);
@@ -106,9 +106,6 @@ export default function Home() {
         <div className={styles.divider} />
 
         <div className={styles.dashBottomRow}>
-          <div className={styles.plannerWidget}>
-            <MemoizedDailyPlanner />
-          </div>
           <div className={styles.dangersWidget}>
             <MemoizedImportantDangers />
           </div>

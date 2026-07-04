@@ -8,6 +8,7 @@ import NeuroEngine from './NeuroEngine';
 import NeuroGuideModal from './NeuroGuideModal';
 import AppSettings from './AppSettings';
 import Schedule from './Schedule';
+import DailyPlanner from './DailyPlanner';
 
 // ══════════════════════════════════════════════
 //  DATA TYPES
@@ -90,25 +91,30 @@ export default function GoalSystem() {
   const [showMissionEdit, setShowMissionEdit] = useState(false);
   const [newPainResult, setNewPainResult] = useState('');
 
-  // ═══ TIME MATRIX CALCULATIONS ═══
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
-  const currentDay = today.getDate();
 
   // Input states for adding new targets
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [rootInput, setRootInput] = useState('');
 
-  // Load from Supabase
+  // Load from Supabase with localStorage fallback
   useEffect(() => {
     const loadData = async () => {
+      // Load from localStorage first (instant)
+      try {
+        const cached = localStorage.getItem('sef_goal_system');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          setData(parsed);
+        }
+      } catch {}
+
+      // Then try Supabase (async)
       try {
         const [{ data: mData }, { data: motData }, { data: tData }, { data: appData }] = await Promise.all([
           supabase.from('missions').select('*').limit(1).maybeSingle(),
           supabase.from('motivators').select('*'),
           supabase.from('targets').select('*').order('created_at', { ascending: true }),
-          supabase.from('app_state').select('*').eq('id', 1).single()
+          supabase.from('app_state').select('*').eq('id', 1).maybeSingle()
         ]);
 
         const targets = (tData || []).map(t => ({
@@ -120,35 +126,40 @@ export default function GoalSystem() {
           parent_id: t.parent_id
         }));
 
-        // Streak logic
+        // Streak logic with guard against double-increment
         let streak = appData?.streak || 0;
         let lastActiveDate = appData?.last_active_date || '';
         
         const today = new Date().toDateString();
-        if (lastActiveDate) {
-          const lastDate = new Date(lastActiveDate);
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          if (lastDate.toDateString() === yesterday.toDateString()) {
-            streak += 1;
-          } else if (lastDate.toDateString() !== today) {
+        if (lastActiveDate !== today) {
+          // Only update streak if we haven't already updated today
+          if (lastActiveDate) {
+            const lastDate = new Date(lastActiveDate);
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (lastDate.toDateString() === yesterday.toDateString()) {
+              streak += 1;
+            } else {
+              streak = 1;
+            }
+          } else {
             streak = 1;
           }
-        } else {
-          streak = 1;
-        }
-        
-        if (lastActiveDate !== today || streak !== (appData?.streak || 0)) {
-          await supabase.from('app_state').upsert({ id: 1, streak, last_active_date: today });
+          // Save streak update
+          try { await supabase.from('app_state').upsert({ id: 1, streak, last_active_date: today }); } catch {}
         }
 
-        setData({
+        const newData: GoalDataV4 = {
           mission: mData ? { title: mData.title, deadline: mData.deadline, why: mData.why, startDate: mData.start_date } : null,
           motivators: motData || [],
           targets,
           streak,
           lastActiveDate: today,
-        });
+        };
+
+        setData(newData);
+        // Cache to localStorage
+        localStorage.setItem('sef_goal_system', JSON.stringify(newData));
       } catch (err) {
         console.error("Supabase load error", err);
       }
@@ -375,8 +386,13 @@ export default function GoalSystem() {
               </div>
             )}
 
-            <div className={styles.scheduleWrapper} style={{ marginTop: '2rem' }}>
-              <Schedule />
+            <div className={styles.visionColumns}>
+              <div className={styles.visionSidebar}>
+                <DailyPlanner />
+              </div>
+              <div className={styles.visionMain}>
+                <Schedule />
+              </div>
             </div>
 
             <div className={styles.motivatorEngine}>

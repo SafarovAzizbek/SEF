@@ -195,7 +195,7 @@
 
 .dashBottomRow {
   display: grid;
-  grid-template-columns: 350px 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 2.5rem;
   align-items: start;
 }
@@ -232,10 +232,7 @@
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .dashBottomRow {
-    grid-template-columns: 1fr 1fr;
-  }
-  .plannerWidget {
-    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
   }
 }
 
